@@ -1,0 +1,34 @@
+{
+  "_comment": "TITAN AMSI Monitor v2.0.1 — Configuration File",
+
+  "filter": {
+    "_comment_severity": "Minimum severity to log: NONE | INFO | LOW | MEDIUM | HIGH | CRITICAL",
+    "min_severity": "LOW",
+
+    "_comment_dedup": "Log DEDUP reference lines (tiny, ~20 bytes each). Set false to save disk space.",
+    "log_dedup_refs": true,
+
+    "_comment_langs": "Capture scripts from ALL languages (PS, JS, VBS, Python, Batch, etc). False = AMSI-native only.",
+    "capture_all_langs": true,
+
+    "_comment_clean": "Also log scripts with no detected threat (SEV_INFO). Useful for training data.",
+    "log_clean_scripts": false,
+
+    "_comment_content": "Max bytes of decoded script content to store in JSON (truncated above this). Default 8192.",
+    "max_content_bytes": 8192,
+
+    "_comment_pid_whitelist": "These PIDs are always logged regardless of severity (e.g. your own analysis tools).",
+    "pid_whitelist": [],
+
+    "_comment_proc_blacklist": "Process names to NEVER log (e.g. known-safe internal tools). Case-insensitive substring match.",
+    "proc_blacklist": [
+      "MsMpEng.exe",
+      "SgrmBroker.exe"
+    ]
+  },
+
+  "output": {
+    "log_file": "logs\\titan_amsi.json",
+    "flush_interval_ms": 100
+  }
+}
