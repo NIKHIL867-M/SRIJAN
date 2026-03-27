@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titan — Threat Intelligence Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #0f1218;
+    --bg3: #151a22;
+    --bg4: #1c2330;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --text2: #8b92a8;
+    --text3: #4a5168;
+    --accent: #00d4ff;
+    --accent2: #0099cc;
+    --red: #ff4757;
+    --orange: #ff8c42;
+    --yellow: #ffd60a;
+    --green: #2ecc71;
+    --purple: #a855f7;
+    --font: 'Syne', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── GRID LINES BACKGROUND ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── TOPBAR ─── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,12,16,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    height: 56px;
+  }
+  .logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .topbar-stat {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .topbar-stat .val {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* upload zone */
+  .upload-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    font-family: var(--font);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .upload-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ─── MAIN LAYOUT ─── */
+  .main {
+    position: relative;
+    z-index: 1;
+    padding: 28px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* ─── SECTION HEADER ─── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .section-header h2 {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── STAT CARDS ROW ─── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--border2); }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--c, var(--accent));
+  }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 8px;
+    font-family: var(--mono);
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--c, var(--text));
+    line-height: 1;
+    font-family: var(--mono);
+  }
+  .stat-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+    font-family: var(--mono);
+  }
+
+  /* ─── MIDDLE ROW: CHART + PIE ─── */
+  .middle-row {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .panel-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 16px;
+    font-family: var(--mono);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* ─── GRAPH + TABLE ROW ─── */
+  .bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  /* ─── CYTOSCAPE GRAPH ─── */
+  #cy {
+    width: 100%;
+    height: 420px;
+    border-radius: 4px;
+    background: var(--bg3);
+  }
+
+  .graph-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text2);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ─── ALERTS TABLE ─── */
+  .table-wrap {
+    overflow-y: auto;
+    max-height: 420px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-family: var(--mono);
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    background: var(--bg2);
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+    z-index: 1;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  tbody tr:hover { background: var(--bg3); }
+  tbody td {
+    padding: 8px 12px;
+    color: var(--text2);
+    vertical-align: middle;
+  }
+  tbody td:first-child { color: var(--text); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .badge-critical { background: rgba(255,71,87,0.15); color: var(--red); border: 1px solid rgba(255,71,87,0.3); }
+  .badge-above    { background: rgba(255,140,66,0.15); color: var(--orange); border: 1px solid rgba(255,140,66,0.3); }
+  .badge-medium   { background: rgba(255,214,10,0.12); color: var(--yellow); border: 1px solid rgba(255,214,10,0.25); }
+  .badge-low      { background: rgba(46,204,113,0.1);  color: var(--green);  border: 1px solid rgba(46,204,113,0.25); }
+
+  /* ─── EVENT DETAIL PANEL ─── */
+  #detail-panel {
+    display: none;
+    position: fixed;
+    right: 0; top: 0; bottom: 0;
+    width: 440px;
+    background: var(--bg2);
+    border-left: 1px solid var(--border2);
+    z-index: 200;
+    overflow-y: auto;
+    padding: 24px;
+    animation: slideIn 0.2s ease;
+  }
+  @keyframes slideIn { from{transform:translateX(100%)} to{transform:translateX(0)} }
+  .detail-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: transparent;
+    border: none;
+    color: var(--text2);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .detail-close:hover { color: var(--text); }
+  .detail-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .detail-ts {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text3);
+    margin-bottom: 20px;
+  }
+  .detail-section {
+    margin-bottom: 20px;
+  }
+  .detail-section-title {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+    font-family: var(--mono);
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 5px 0;
+    font-size: 12px;
+    font-family: var(--mono);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .detail-row .key { color: var(--text3); flex-shrink: 0; margin-right: 12px; }
+  .detail-row .val { color: var(--text); text-align: right; word-break: break-all; }
+  .detail-row .val.code {
+    background: var(--bg3);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  .raw-event {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text2);
+    margin-top: 8px;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.5;
+  }
+
+  /* ─── UPLOAD OVERLAY ─── */
+  #upload-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,12,16,0.92);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+  }
+  #upload-overlay.active { display: flex; }
+  .upload-box {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 40px 48px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+  }
+  .upload-box h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .upload-box p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .drop-zone {
+    border: 1px dashed var(--border2);
+    border-radius: 6px;
+    padding: 28px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(0,212,255,0.04);
+  }
+  .drop-zone-text { font-size: 13px; color: var(--text2); }
+  .drop-zone-text span { color: var(--accent); cursor: pointer; }
+  #file-input { display: none; }
+  .upload-cancel {
+    font-size: 12px;
+    color: var(--text3);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--font);
+    margin-top: 8px;
+  }
+  .upload-cancel:hover { color: var(--text2); }
+
+  /* ─── PROCESS LIST ─── */
+  .full-row { margin-bottom: 24px; }
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+  }
+  .process-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .process-card:hover { border-color: var(--border2); background: var(--bg4); }
+  .process-name { color: var(--text); font-weight: 500; }
+  .process-meta { color: var(--text3); font-size: 10px; }
+
+  /* ─── TIMELINE ─── */
+  .timeline {
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .timeline-inner {
+    min-width: 600px;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* ─── SCAN LINE EFFECT ─── */
+  @keyframes scan { 0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)} }
+
+  /* filter controls */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .filter-btn.all.active { border-color: var(--text2); color: var(--text2); }
+  .filter-btn.crit.active { border-color: var(--red); color: var(--red); }
+  .filter-btn.above.active { border-color: var(--orange); color: var(--orange); }
+  .filter-btn.med.active { border-color: var(--yellow); color: var(--yellow); }
+  .filter-btn.low.active { border-color: var(--green); color: var(--green); }
+
+  /* node tooltip */
+  #cy-tooltip {
+    position: absolute;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    pointer-events: none;
+    z-index: 50;
+    display: none;
+    max-width: 220px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-dot"></div>
+    TITAN
+    <span style="font-size:11px;color:var(--text3);font-weight:400;letter-spacing:0.06em;font-family:var(--mono)">// threat intelligence</span>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-stat">
+      <span>Source</span>
+      <span class="val" id="tb-source">titan_20260322</span>
+    </div>
+    <div class="topbar-stat">
+      <span>Scanned</span>
+      <span class="val" id="tb-ts">2026-03-21</span>
+    </div>
+    <button class="upload-btn" onclick="document.getElementById('upload-overlay').classList.add('active')">
+      ↑ Load JSON
+    </button>
+  </div>
+</div>
+
+<!-- UPLOAD OVERLAY -->
+<div id="upload-overlay">
+  <div class="upload-box">
+    <h3>Load Threat JSON</h3>
+    <p>Upload your <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">final_threat_alerts.json</code> or any correlated events file from your ML model.</p>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="drop-zone-text">Drop file here or <span>browse</span></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono)">.json files only</div>
+    </div>
+    <input type="file" id="file-input" accept=".json">
+    <button class="upload-cancel" onclick="document.getElementById('upload-overlay').classList.remove('active')">cancel</button>
+  </div>
+</div>
+
+<!-- NODE TOOLTIP -->
+<div id="cy-tooltip"></div>
+
+<!-- DETAIL PANEL -->
+<div id="detail-panel">
+  <button class="detail-close" onclick="closeDetail()">✕</button>
+  <div id="detail-content"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STATS ROW -->
+  <div class="section-header"><h2>Overview</h2></div>
+  <div class="stats-row">
+    <div class="stat-card" style="--c:var(--accent)">
+      <div class="stat-label">Total Alerts</div>
+      <div class="stat-value" id="s-total">—</div>
+      <div class="stat-sub" id="s-events">— raw events</div>
+    </div>
+    <div class="stat-card" style="--c:var(--red)">
+      <div class="stat-label">Critical</div>
+      <div class="stat-value" id="s-crit">—</div>
+      <div class="stat-sub">AI evaluation</div>
+    </div>
+    <div class="stat-card" style="--c:var(--orange)">
+      <div class="stat-label">Above Medium</div>
+      <div class="stat-value" id="s-above">—</div>
+      <div class="stat-sub">AI evaluation</div>
+    </div>
+    <div class="stat-card" style="--c:var(--yellow)">
+      <div class="stat-label">System High</div>
+      <div class="stat-value" id="s-syshigh">—</div>
+      <div class="stat-sub">system_risk_level</div>
+    </div>
+    <div class="stat-card" style="--c:var(--purple)">
+      <div class="stat-label">Unique Processes</div>
+      <div class="stat-value" id="s-procs">—</div>
+      <div class="stat-sub">observed</div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="section-header"><h2>Analysis</h2></div>
+  <div class="middle-row">
+
+    <!-- BAR CHART: AI Eval over time -->
+    <div class="panel">
+      <div class="panel-title">
+        <span>AI Evaluation Distribution</span>
+        <span style="font-size:10px;color:var(--text3)" id="chart-subtitle">by alert group</span>
+      </div>
+      <div style="position:relative;height:260px">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+
+    <!-- DONUT: risk breakdown -->
+    <div class="panel">
+      <div class="panel-title">Risk Breakdown</div>
+      <div style="position:relative;height:180px;margin-bottom:12px">
+        <canvas id="donutChart"></canvas>
+      </div>
+      <div id="donut-legend" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+  </div>
+
+  <!-- GRAPH + TABLE -->
+  <div class="section-header"><h2>Network Graph &amp; Alerts</h2></div>
+  <div class="bottom-row">
+
+    <!-- CYTOSCAPE GRAPH -->
+    <div class="panel" style="padding:16px">
+      <div class="panel-title">
+        <span>Process → IP Connections</span>
+        <span style="font-size:10px;color:var(--text3)">click node for details</span>
+      </div>
+      <div id="cy"></div>
+      <div class="graph-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>Process</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00d4ff"></div>IP (clean)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff4757"></div>Critical/High</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff8c42"></div>Above medium</div>
+      </div>
+    </div>
+
+    <!-- ALERTS TABLE -->
+    <div class="panel" style="padding:16px">
+      <div class="panel-title">Alert Log</div>
+      <div class="filter-bar">
+        <button class="filter-btn all active" onclick="filterTable('ALL',this)">All</button>
+        <button class="filter-btn crit" onclick="filterTable('CRITICAL',this)">Critical</button>
+        <button class="filter-btn above" onclick="filterTable('Above Medium',this)">Above Med</button>
+        <button class="filter-btn med" onclick="filterTable('Medium',this)">Medium</button>
+        <button class="filter-btn low" onclick="filterTable('Low',this)">Low</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>AI Eval</th>
+              <th>Sys Risk</th>
+              <th>Type</th>
+              <th>Process</th>
+            </tr>
+          </thead>
+          <tbody id="alert-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PROCESS CARDS -->
+  <div class="full-row">
+    <div class="section-header"><h2>Observed Processes</h2></div>
+    <div class="process-grid" id="process-grid"></div>
+  </div>
+
+  <!-- PROTOCOL CHART -->
+  <div class="section-header"><h2>Network Activity</h2></div>
+  <div class="middle-row">
+    <div class="panel">
+      <div class="panel-title">Protocol Breakdown</div>
+      <div style="position:relative;height:220px">
+        <canvas id="protoChart"></canvas>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Script Executions</div>
+      <div id="script-list" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA EMBEDDED FROM final_threat_alerts.json
+// ═══════════════════════════════════════════════════════
+const EMBEDDED_DATA = [{"timestamp":"2026-03-21T19:09:33.426Z","system_risk_level":"Low","ai_evaluation":"Low","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","pid":17016,"process_name":"svchost.exe","user_name":"NT AUTHORITY\\LOCAL SERVICE","user_sid":"S-1-5-19","src_ip":"192.168.56.1","dst_ip":"239.255.255.250","src_port":1900,"dst_port":1900,"protocol":"UDP","direction":"OUTBOUND","tcp_state":"UNKNOWN","first_ts":"2026-03-21 19:09:33.426782+00:00","last_ts":"2026-03-21 19:09:37.318692+00:00","count":342},{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","pid":17016,"process_name":"svchost.exe","user_name":"NT AUTHORITY\\LOCAL SERVICE","user_sid":"S-1-5-19","src_ip":"172.18.0.1","dst_ip":"239.255.255.250","src_port":1900,"dst_port":1900,"protocol":"UDP","direction":"OUTBOUND","tcp_state":"UNKNOWN","first_ts":"2026-03-21 19:09:33.430127+00:00","last_ts":"2026-03-21 19:09:37.260380+00:00","count":342}]},{"timestamp":"2026-03-21T19:09:16.290Z","system_risk_level":"Low","ai_evaluation":"Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"etw_kernel_process","record_type":"process_start","process_name":"msedgewebview2.exe","canonical_path":"c:\\program files (x86)\\microsoft\\edgewebview\\application\\146.0.3856.62\\msedgewebview2.exe","signature_valid":true,"location_type":"KNOWN_USER","new_child_flag":true,"first_ts":"2026-03-21 19:09:16.290556+00:00","last_ts":"2026-03-21 19:09:25.191335+00:00","count":195}]},{"timestamp":"2026-03-21T19:09:15.757Z","system_risk_level":"Low","ai_evaluation":"Low","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","pid":5228,"process_name":"nvcontainer.exe","user_name":"NT AUTHORITY\\SYSTEM","user_sid":"S-1-5-18","src_ip":"172.18.0.1","dst_ip":"224.0.0.251","src_port":5353,"dst_port":5353,"protocol":"UDP","direction":"OUTBOUND","tcp_state":"UNKNOWN","first_ts":"2026-03-21 19:09:15.757488+00:00","last_ts":"2026-03-21 19:09:35.402894+00:00","count":83},{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","pid":5228,"process_name":"nvcontainer.exe","user_name":"NT AUTHORITY\\SYSTEM","user_sid":"S-1-5-18","src_ip":"192.168.56.1","dst_ip":"224.0.0.251","src_port":5353,"dst_port":5353,"protocol":"UDP","direction":"OUTBOUND","tcp_state":"UNKNOWN","first_ts":"2026-03-21 19:09:16.088364+00:00","last_ts":"2026-03-21 19:09:35.371664+00:00","count":54},{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","pid":5228,"process_name":"nvcontainer.exe","user_name":"NT AUTHORITY\\SYSTEM","user_sid":"S-1-5-18","src_ip":"192.168.1.4","dst_ip":"224.0.0.251","src_port":5353,"dst_port":5353,"protocol":"UDP","direction":"OUTBOUND","tcp_state":"UNKNOWN","first_ts":"2026-03-21 19:09:18.317983+00:00","last_ts":"2026-03-21 19:09:34.653319+00:00","count":51}]},{"timestamp":"2026-03-21T19:09:17.195Z","system_risk_level":"Low","ai_evaluation":"Above Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","pid":5228,"process_name":"nvcontainer.exe","src_ip":"192.168.1.4","dst_ip":"142.250.195.110","src_port":5353,"dst_port":443,"protocol":"HTTPS_TLS","direction":"OUTBOUND","tcp_state":"ESTABLISHED","first_ts":"2026-03-21 19:09:17.195Z"}]},{"timestamp":"2026-03-21T19:09:34.426Z","system_risk_level":"Low","ai_evaluation":"Above Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","process_name":"brave.exe","src_ip":"192.168.1.4","dst_ip":"129.227.206.5","src_port":52341,"dst_port":443,"protocol":"HTTPS_TLS","direction":"OUTBOUND","tcp_state":"ESTABLISHED","first_ts":"2026-03-21 19:09:34.426386+00:00"}]},{"timestamp":"2026-03-21T19:09:16.354Z","system_risk_level":"Low","ai_evaluation":"Above Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","process_name":"brave.exe","src_ip":"192.168.1.4","dst_ip":"3.173.21.63","src_port":49821,"dst_port":443,"protocol":"HTTPS_TLS","direction":"OUTBOUND","tcp_state":"ESTABLISHED","first_ts":"2026-03-21 19:09:16.354Z"}]},{"timestamp":"2026-03-19T17:22:22.000Z","system_risk_level":"High","ai_evaluation":"CRITICAL","raw_events":[{"source_file":"titan_applog","source":"PowerShell","record_type":"script_execution","process_name":"powershell.exe","script_content":". 'C:\\Users\\msant\\OneDrive\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1'","first_ts":"2026-03-19 17:22:22+00:00","last_ts":"2026-03-19 17:22:52+00:00","count":3},{"source_file":"titan_applog","source":"PowerShell","record_type":"script_execution","process_name":"powershell.exe","script_content":"prompt","first_ts":"2026-03-19 17:22:31+00:00","last_ts":"2026-03-19 17:22:43+00:00","count":3},{"source_file":"titan_applog","source":"PowerShell","record_type":"script_execution","process_name":"powershell.exe","script_content":"ipconfig","first_ts":"2026-03-19 17:22:37+00:00"},{"source_file":"titan_applog","source":"PowerShell","record_type":"script_execution","process_name":"powershell.exe","script_content":"help","first_ts":"2026-03-19 17:22:40+00:00"}]},{"timestamp":"2026-03-21T19:09:16.187Z","system_risk_level":"Low","ai_evaluation":"Above Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","process_name":"svchost.exe","src_ip":"192.168.1.4","dst_ip":"40.126.17.135","src_port":49200,"dst_port":443,"protocol":"TCP","direction":"OUTBOUND","tcp_state":"ESTABLISHED","first_ts":"2026-03-21 19:09:16.187Z"}]},{"timestamp":"2026-03-21T19:09:17.191Z","system_risk_level":"Low","ai_evaluation":"Above Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","process_name":"PerfWatson2.exe","src_ip":"192.168.1.4","dst_ip":"20.189.173.24","src_port":49310,"dst_port":443,"protocol":"TCP","direction":"OUTBOUND","tcp_state":"ESTABLISHED","first_ts":"2026-03-21 19:09:17.191Z"}]},{"timestamp":"2026-03-21T19:09:18.798Z","system_risk_level":"Low","ai_evaluation":"Above Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","process_name":"lsass.exe","src_ip":"192.168.1.4","dst_ip":"52.113.194.132","src_port":49400,"dst_port":443,"protocol":"HTTPS_TLS","direction":"OUTBOUND","tcp_state":"ESTABLISHED","first_ts":"2026-03-21 19:09:18.798Z"}]},{"timestamp":"2026-03-21T19:09:21.252Z","system_risk_level":"Low","ai_evaluation":"Above Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","process_name":"wininit.exe","src_ip":"192.168.1.4","dst_ip":"23.204.72.163","src_port":49501,"dst_port":53,"protocol":"UDP","direction":"OUTBOUND","tcp_state":"UNKNOWN","first_ts":"2026-03-21 19:09:21.252Z"}]},{"timestamp":"2026-03-21T19:09:22.815Z","system_risk_level":"Low","ai_evaluation":"Above Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","src_ip":"172.18.0.1","dst_ip":"224.77.77.77","src_port":62544,"dst_port":12177,"protocol":"UDP","direction":"OUTBOUND","tcp_state":"UNKNOWN","first_ts":"2026-03-21 19:09:22.815339+00:00","last_ts":"2026-03-21 19:09:22.815339+00:00"}]},{"timestamp":"2026-03-21T19:09:16.290Z","system_risk_level":"Low","ai_evaluation":"Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"etw_kernel_process","record_type":"process_start","process_name":"msedgewebview2.exe","canonical_path":"c:\\program files (x86)\\microsoft\\edgewebview\\application\\146.0.3856.62\\msedgewebview2.exe","signature_valid":true,"location_type":"KNOWN_USER","new_child_flag":true,"first_ts":"2026-03-21 19:09:16.290556+00:00"}]},{"timestamp":"2026-03-21T19:09:26.196Z","system_risk_level":"Low","ai_evaluation":"Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"etw_kernel_process","record_type":"process_start","process_name":"crossdeviceservice.exe","canonical_path":"c:\\program files\\windowsapps\\microsoftwindows.crossdevice_1.26012.79.0_x64__cw5n1h2txyewy\\crossdeviceservice.exe","signature_valid":true,"location_type":"KNOWN_USER","new_child_flag":true,"first_ts":"2026-03-21 19:09:26.196457+00:00"}]},{"timestamp":"2026-03-21T19:09:35.003Z","system_risk_level":"Low","ai_evaluation":"Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"npcap_live","record_type":"network_connect","src_ip":"fe80::9d1f:3264:32eb:c0fd","dst_ip":"ff02::c","src_port":1900,"dst_port":1900,"protocol":"UDP","direction":"OUTBOUND","tcp_state":"UNKNOWN","ipv6":true,"first_ts":"2026-03-21 19:09:35.003191+00:00"}]},{"timestamp":"2026-03-21T19:09:35.198Z","system_risk_level":"Low","ai_evaluation":"Medium","raw_events":[{"source_file":"titan_20260322_003915","source":"etw_kernel_process","record_type":"process_start","process_name":"uihost.exe","canonical_path":"c:\\program files\\mcafee\\webadvisor\\uihost.exe","signature_valid":true,"location_type":"KNOWN_USER","new_child_flag":true,"first_ts":"2026-03-21 19:09:35.198130+00:00"}]},{"timestamp":"2026-03-21T19:09:37.197Z","system_risk_level":"Low","ai_evaluation":"Low","raw_events":[{"source_file":"titan_20260322_003915","source":"etw_kernel_process","record_type":"process_start","process_name":"securityhealthservice.exe","canonical_path":"c:\\windows\\system32\\securityhealthservice.exe","signature_valid":true,"location_type":"SYSTEM","new_child_flag":true,"first_ts":"2026-03-21 19:09:37.197873+00:00"}]},{"timestamp":"2026-03-21T20:17:47.337Z","system_risk_level":"Low","ai_evaluation":"Above Medium","raw_events":[{"source_file":"titan_20260322_014746","source":"npcap_live","record_type":"network_connect","pid":10480,"process_name":"svchost.exe","src_ip":"192.168.1.4","dst_ip":"10.14.146.163","src_port":55415,"dst_port":7680,"protocol":"UNKNOWN","direction":"OUTBOUND","tcp_state":"SYN_SENT","first_ts":"2026-03-21 20:17:47.337366+00:00"}]},{"timestamp":"2026-03-21T20:17:51.963Z","system_risk_level":"Low","ai_evaluation":"Low","raw_events":[{"source_file":"titan_20260322_014746","source":"npcap_live","record_type":"network_connect","src_ip":"224.0.0.251","dst_ip":"192.168.1.6","src_port":5353,"dst_port":5353,"protocol":"UNKNOWN","direction":"INBOUND","tcp_state":"UNKNOWN","first_ts":"2026-03-21 20:17:51.963449+00:00"}]}];
+
+// ═══════════════════════════════════════════════════════
+// PROCESS DATA
+// ═══════════════════════════════════════════════════════
+
+let allData = EMBEDDED_DATA;
+let currentFilter = 'ALL';
+
+function evalBadge(ev) {
+  const m = { 'CRITICAL':'badge-critical','Above Medium':'badge-above','Medium':'badge-medium','Low':'badge-low' };
+  return `<span class="badge ${m[ev]||'badge-low'}">${ev||'Low'}</span>`;
+}
+function sysRiskBadge(r) {
+  return `<span class="badge ${r==='High'?'badge-critical':'badge-low'}">${r}</span>`;
+}
+function fmtTs(ts) {
+  if(!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) +
+    ' ' + d.toLocaleDateString('en-GB',{month:'short',day:'numeric'});
+}
+function firstProcess(alert) {
+  for(const e of alert.raw_events||[]) if(e.process_name) return e.process_name;
+  return '—';
+}
+function firstRecordType(alert) {
+  for(const e of alert.raw_events||[]) if(e.record_type) return e.record_type;
+  return '—';
+}
+
+// ─── RENDER DASHBOARD ───
+function renderDashboard(data) {
+  allData = data;
+
+  // Stats
+  const evCount = data.reduce((a,d)=>a+(d.raw_events||[]).length,0);
+  const crits = data.filter(d=>d.ai_evaluation==='CRITICAL').length;
+  const aboves = data.filter(d=>d.ai_evaluation==='Above Medium').length;
+  const sysHigh = data.filter(d=>d.system_risk_level==='High').length;
+  const procs = new Set(data.flatMap(d=>d.raw_events.map(e=>e.process_name).filter(Boolean)));
+
+  document.getElementById('s-total').textContent = data.length;
+  document.getElementById('s-events').textContent = `${evCount} raw events`;
+  document.getElementById('s-crit').textContent = crits;
+  document.getElementById('s-above').textContent = aboves;
+  document.getElementById('s-syshigh').textContent = sysHigh;
+  document.getElementById('s-procs').textContent = procs.size;
+
+  // Topbar
+  const src = [...new Set(data.flatMap(d=>d.raw_events.map(e=>e.source_file).filter(Boolean)))];
+  document.getElementById('tb-source').textContent = src[0]||'unknown';
+  const ts = data.map(d=>d.timestamp).filter(Boolean).sort();
+  if(ts.length) document.getElementById('tb-ts').textContent = ts[0].split('T')[0];
+
+  renderBarChart(data);
+  renderDonut(data);
+  renderGraph(data);
+  renderTable(data, 'ALL');
+  renderProcessCards(data);
+  renderProtoChart(data);
+  renderScripts(data);
+}
+
+// ─── BAR CHART ───
+let barChart;
+function renderBarChart(data) {
+  const counts = { 'Low':0,'Medium':0,'Above Medium':0,'CRITICAL':0 };
+  data.forEach(d=>{ if(counts[d.ai_evaluation]!==undefined) counts[d.ai_evaluation]++; });
+  const labels = ['Low','Medium','Above Medium','CRITICAL'];
+  const vals = labels.map(l=>counts[l]);
+  const colors = ['#2ecc71','#ffd60a','#ff8c42','#ff4757'];
+
+  if(barChart) barChart.destroy();
+  barChart = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: vals,
+        backgroundColor: colors.map(c=>c+'33'),
+        borderColor: colors,
+        borderWidth: 1,
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{
+        callbacks:{
+          label: ctx=>`${ctx.raw} alerts`
+        }
+      }},
+      scales: {
+        x:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#8b92a8',font:{family:'JetBrains Mono',size:11}} },
+        y:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#8b92a8',font:{family:'JetBrains Mono',size:11},stepSize:1} }
+      }
+    }
+  });
+}
+
+// ─── DONUT ───
+let donut;
+function renderDonut(data) {
+  const counts = { 'Low':0,'Medium':0,'Above Medium':0,'CRITICAL':0 };
+  data.forEach(d=>{ if(counts[d.ai_evaluation]!==undefined) counts[d.ai_evaluation]++; });
+  const labels = ['CRITICAL','Above Medium','Medium','Low'];
+  const vals = labels.map(l=>counts[l]);
+  const colors = ['#ff4757','#ff8c42','#ffd60a','#2ecc71'];
+  const total = vals.reduce((a,b)=>a+b,0);
+
+  if(donut) donut.destroy();
+  donut = new Chart(document.getElementById('donutChart'), {
+    type: 'doughnut',
+    data: { labels, datasets:[{ data:vals, backgroundColor:colors.map(c=>c+'55'), borderColor:colors, borderWidth:1.5, hoverOffset:4 }] },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      cutout:'68%',
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw/total*100)}%)`}}}
+    }
+  });
+
+  // Custom legend
+  const leg = document.getElementById('donut-legend');
+  leg.innerHTML = labels.map((l,i)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px">
+      <span style="display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${colors[i]};flex-shrink:0"></span>
+        <span style="color:#8b92a8">${l}</span>
+      </span>
+      <span style="color:${colors[i]};font-weight:500">${vals[i]}</span>
+    </div>
+  `).join('');
+}
+
+// ─── CYTOSCAPE GRAPH ───
+let cy;
+function renderGraph(data) {
+  const nodes = {};
+  const edges = [];
+  const edgeSet = new Set();
+
+  data.forEach(alert=>{
+    const ai = alert.ai_evaluation;
+    (alert.raw_events||[]).forEach(ev=>{
+      const proc = ev.process_name || 'unknown';
+      if(!nodes[proc]) nodes[proc] = {type:'process', ai};
+
+      if(ev.record_type==='network_connect' && ev.dst_ip) {
+        const dst = ev.dst_ip;
+        if(!nodes[dst]) nodes[dst] = {type:'ip', ai};
+        const ek = `${proc}__${dst}__${ev.protocol}`;
+        if(!edgeSet.has(ek)) {
+          edgeSet.add(ek);
+          edges.push({src:proc,dst,proto:ev.protocol||'',port:ev.dst_port||'',ai});
+        }
+      }
+    });
+  });
+
+  const nodeColor = (n) => {
+    if(n.type==='process') return n.ai==='CRITICAL'?'#ff4757': n.ai==='Above Medium'?'#ff8c42':'#a855f7';
+    return n.ai==='CRITICAL'?'#ff4757': n.ai==='Above Medium'?'#ff8c42':'#00d4ff';
+  };
+
+  const elements = [
+    ...Object.entries(nodes).map(([id,n])=>({ data:{ id, label:id.length>18?id.slice(0,16)+'…':id, fullLabel:id, type:n.type, ai:n.ai }, classes:n.type } )),
+    ...edges.map((e,i)=>({ data:{ id:`e${i}`, source:e.src, target:e.dst, proto:e.proto, port:e.port, ai:e.ai } }))
+  ];
+
+  if(cy) cy.destroy();
+  cy = cytoscape({
+    container: document.getElementById('cy'),
+    elements,
+    style: [
+      { selector:'node[type="process"]', style:{
+        'background-color': ele=>nodeColor({type:'process',ai:ele.data('ai')}),
+        'label':'data(label)',
+        'color':'#e8eaf0','font-size':'9px','font-family':'JetBrains Mono','text-valign':'bottom','text-margin-y':'4px',
+        'width':28,'height':28,'border-width':1.5,'border-color':ele=>nodeColor({type:'process',ai:ele.data('ai')}),
+        'background-opacity':0.2,'border-opacity':1
+      }},
+      { selector:'node[type="ip"]', style:{
+        'background-color': ele=>nodeColor({type:'ip',ai:ele.data('ai')}),
+        'label':'data(label)',
+        'color':'#8b92a8','font-size':'8px','font-family':'JetBrains Mono','text-valign':'bottom','text-margin-y':'3px',
+        'shape':'rectangle','width':22,'height':22,'border-width':1,'border-color':ele=>nodeColor({type:'ip',ai:ele.data('ai')}),
+        'background-opacity':0.15,'border-opacity':0.8
+      }},
+      { selector:'edge', style:{
+        'width':1,'line-color':'rgba(255,255,255,0.12)','target-arrow-color':'rgba(255,255,255,0.2)',
+        'target-arrow-shape':'triangle','arrow-scale':0.6,'curve-style':'bezier',
+        'line-opacity':0.6
+      }},
+      { selector:'edge[ai="CRITICAL"]', style:{'line-color':'rgba(255,71,87,0.5)','target-arrow-color':'rgba(255,71,87,0.6)','width':1.5}},
+      { selector:'edge[ai="Above Medium"]', style:{'line-color':'rgba(255,140,66,0.4)','target-arrow-color':'rgba(255,140,66,0.5)'}},
+      { selector:'node:selected', style:{'border-width':2,'border-opacity':1,'background-opacity':0.5}},
+    ],
+    layout: { name:'cose', idealEdgeLength:80, nodeOverlap:20, refresh:20, fit:true, padding:20, randomize:false, componentSpacing:100, nodeRepulsion:8000 },
+    userZoomingEnabled:true, userPanningEnabled:true
+  });
+
+  // Node click → detail
+  cy.on('tap','node', function(e){
+    const node = e.target;
+    const id = node.data('fullLabel');
+    const ai = node.data('ai');
+    const type = node.data('type');
+    // Find matching alerts
+    const matched = allData.filter(d=>{
+      return d.ai_evaluation===ai || (d.raw_events||[]).some(ev=>ev.process_name===id||ev.dst_ip===id||ev.src_ip===id);
+    });
+    if(matched.length) showDetail(matched[0], id);
+  });
+
+  // Tooltip on hover
+  const tooltip = document.getElementById('cy-tooltip');
+  cy.on('mouseover','node', function(e){
+    const pos = e.renderedPosition;
+    const rect = document.getElementById('cy').getBoundingClientRect();
+    tooltip.style.left = (rect.left + pos.x + 12)+'px';
+    tooltip.style.top  = (rect.top  + pos.y - 20)+'px';
+    tooltip.style.display = 'block';
+    const id = e.target.data('fullLabel');
+    tooltip.textContent = id;
+  });
+  cy.on('mouseout','node', ()=>{ tooltip.style.display='none'; });
+}
+
+// ─── TABLE ───
+function renderTable(data, filter) {
+  currentFilter = filter;
+  const tbody = document.getElementById('alert-tbody');
+  const filtered = filter==='ALL' ? data : data.filter(d=>d.ai_evaluation===filter);
+  tbody.innerHTML = filtered.map((alert,i)=>`
+    <tr onclick="showDetail(allData[${allData.indexOf(alert)}])">
+      <td>${fmtTs(alert.timestamp)}</td>
+      <td>${evalBadge(alert.ai_evaluation)}</td>
+      <td>${sysRiskBadge(alert.system_risk_level)}</td>
+      <td style="color:var(--text3)">${firstRecordType(alert)}</td>
+      <td style="color:var(--accent);font-size:11px">${firstProcess(alert)}</td>
+    </tr>
+  `).join('');
+}
+
+function filterTable(val, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable(allData, val);
+}
+
+// ─── PROCESS CARDS ───
+function renderProcessCards(data) {
+  const procMap = {};
+  data.forEach(alert=>{
+    (alert.raw_events||[]).forEach(ev=>{
+      const p = ev.process_name;
+      if(!p) return;
+      if(!procMap[p]) procMap[p] = {count:0, maxAI:'Low', path:ev.canonical_path||''};
+      procMap[p].count++;
+      const rank = {Low:0,Medium:1,'Above Medium':2,CRITICAL:3};
+      if((rank[alert.ai_evaluation]||0) > (rank[procMap[p].maxAI]||0)) procMap[p].maxAI = alert.ai_evaluation;
+    });
+  });
+  const grid = document.getElementById('process-grid');
+  const aiColor = {CRITICAL:'var(--red)','Above Medium':'var(--orange)',Medium:'var(--yellow)',Low:'var(--text3)'};
+  grid.innerHTML = Object.entries(procMap).sort((a,b)=>{
+    const rank = {Low:0,Medium:1,'Above Medium':2,CRITICAL:3};
+    return (rank[b[1].maxAI]||0)-(rank[a[1].maxAI]||0);
+  }).map(([name,info])=>`
+    <div class="process-card" onclick="filterToProcess('${name}')">
+      <div>
+        <div class="process-name">${name}</div>
+        <div class="process-meta">${info.count} event${info.count!==1?'s':''}</div>
+      </div>
+      <span class="badge ${info.maxAI==='CRITICAL'?'badge-critical':info.maxAI==='Above Medium'?'badge-above':info.maxAI==='Medium'?'badge-medium':'badge-low'}" style="font-size:9px">${info.maxAI}</span>
+    </div>
+  `).join('');
+}
+
+function filterToProcess(name) {
+  const matched = allData.filter(d=>d.raw_events.some(e=>e.process_name===name));
+  if(matched.length) showDetail(matched[0], name);
+}
+
+// ─── PROTO CHART ───
+let protoChart;
+function renderProtoChart(data) {
+  const counts = {};
+  data.forEach(d=>{
+    (d.raw_events||[]).forEach(ev=>{
+      if(ev.protocol) counts[ev.protocol] = (counts[ev.protocol]||0) + 1;
+    });
+  });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const labels = sorted.map(s=>s[0]);
+  const vals   = sorted.map(s=>s[1]);
+  const colors = ['#00d4ff','#a855f7','#2ecc71','#ffd60a','#ff8c42','#ff4757'];
+
+  if(protoChart) protoChart.destroy();
+  protoChart = new Chart(document.getElementById('protoChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data:vals, backgroundColor:colors.map(c=>c+'33'), borderColor:colors, borderWidth:1, borderRadius:3 }]
+    },
+    options: {
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#8b92a8',font:{family:'JetBrains Mono',size:11}} },
+        y:{ grid:{display:false}, ticks:{color:'#8b92a8',font:{family:'JetBrains Mono',size:11}} }
+      }
+    }
+  });
+}
+
+// ─── SCRIPTS ───
+function renderScripts(data) {
+  const scripts = [];
+  data.forEach(alert=>{
+    (alert.raw_events||[]).forEach(ev=>{
+      if(ev.record_type==='script_execution') scripts.push({...ev, ai:alert.ai_evaluation});
+    });
+  });
+  const el = document.getElementById('script-list');
+  if(!scripts.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-family:var(--mono);font-size:12px">No script executions found</div>';
+    return;
+  }
+  el.innerHTML = scripts.map(s=>`
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:10px 12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--accent)">${s.process_name||'unknown'}</span>
+        <span class="badge ${s.ai==='CRITICAL'?'badge-critical':'badge-above'}">${s.ai}</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--yellow);background:var(--bg);padding:6px 8px;border-radius:3px;word-break:break-all">${s.script_content||'—'}</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:6px">${s.first_ts||''} ${s.count?`· ×${s.count}`:''}</div>
+    </div>
+  `).join('');
+}
+
+// ─── DETAIL PANEL ───
+function showDetail(alert, highlightId) {
+  const panel = document.getElementById('detail-panel');
+  const content = document.getElementById('detail-content');
+
+  const evBadge = evalBadge(alert.ai_evaluation);
+  const sysB    = sysRiskBadge(alert.system_risk_level);
+
+  content.innerHTML = `
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:8px">
+      ${evBadge} ${sysB}
+    </div>
+    <div class="detail-title">${highlightId || firstProcess(alert)}</div>
+    <div class="detail-ts">${alert.timestamp || '—'}</div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Alert Info</div>
+      <div class="detail-row"><span class="key">AI Evaluation</span><span class="val">${alert.ai_evaluation||'—'}</span></div>
+      <div class="detail-row"><span class="key">System Risk</span><span class="val">${alert.system_risk_level||'—'}</span></div>
+      <div class="detail-row"><span class="key">Raw Events</span><span class="val">${(alert.raw_events||[]).length}</span></div>
+      <div class="detail-row"><span class="key">Timestamp</span><span class="val">${alert.timestamp||'—'}</span></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Raw Events</div>
+      ${(alert.raw_events||[]).map(ev=>`
+        <div style="margin-bottom:10px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--accent);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em">${ev.record_type||'event'}</div>
+          <div class="raw-event">${JSON.stringify(ev, null, 2)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  panel.style.display = 'block';
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').style.display = 'none';
+}
+
+// ─── FILE UPLOAD ───
+document.getElementById('file-input').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const json = JSON.parse(ev.target.result);
+      const arr = Array.isArray(json) ? json : (json.results || json.events || [json]);
+      document.getElementById('upload-overlay').classList.remove('active');
+      renderDashboard(arr);
+    } catch(err) {
+      alert('Invalid JSON file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+});
+
+// Drag and drop
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', ()=>dz.classList.remove('dragover'));
+dz.addEventListener('drop', e=>{
+  e.preventDefault(); dz.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if(file) { document.getElementById('file-input').files = e.dataTransfer.files; document.getElementById('file-input').dispatchEvent(new Event('change')); }
+});
+
+// ─── INIT ───
+renderDashboard(EMBEDDED_DATA);
+</script>
+</body>
+</html>

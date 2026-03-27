@@ -1,0 +1,2416 @@
+{
+  "meta": {
+    "generated_at": "2026-03-22T12:53:38Z",
+    "correlator_version": "4.0",
+    "total_events": 2417,
+    "total_groups": 47,
+    "input_files": [
+      "titan_20260322_014746.jsonl",
+      "titan_20260322_003915.jsonl",
+      "titan_applog.json"
+    ],
+    "config": {
+      "time_window_seconds": 30,
+      "script_time_window_seconds": 60,
+      "generic_names_excluded": [
+        "backgroundtaskhost.exe",
+        "conhost.exe",
+        "ctfmon.exe",
+        "dllhost.exe",
+        "rundll32.exe",
+        "runtimebroker.exe",
+        "sihost.exe",
+        "svchost.exe",
+        "taskhost.exe",
+        "taskhostw.exe",
+        "werfault.exe",
+        "wmiprvse.exe"
+      ]
+    }
+  },
+  "correlated_groups": [
+    {
+      "corr_id": "CG-00357975",
+      "corr_type": "network_flow",
+      "unique_events": 2,
+      "total_occurrences": 684,
+      "start_ts": "2026-03-21T19:09:33.426Z",
+      "end_ts": "2026-03-21T19:09:37.318Z",
+      "duration_seconds": 3.89,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [
+        "svchost.exe"
+      ],
+      "users": [
+        "NT AUTHORITY\\LOCAL SERVICE"
+      ],
+      "pids": [
+        17016
+      ],
+      "dest_ips": [
+        "239.255.255.250"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 17016,
+          "process_name": "svchost.exe",
+          "user_name": "NT AUTHORITY\\LOCAL SERVICE",
+          "user_sid": "S-1-5-19",
+          "src_ip": "192.168.56.1",
+          "dst_ip": "239.255.255.250",
+          "src_port": 1900,
+          "dst_port": 1900,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:33.426782+00:00",
+          "last_ts": "2026-03-21 19:09:37.318692+00:00",
+          "count": 342
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 17016,
+          "process_name": "svchost.exe",
+          "user_name": "NT AUTHORITY\\LOCAL SERVICE",
+          "user_sid": "S-1-5-19",
+          "src_ip": "172.18.0.1",
+          "dst_ip": "239.255.255.250",
+          "src_port": 1900,
+          "dst_port": 1900,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:33.430127+00:00",
+          "last_ts": "2026-03-21 19:09:37.260380+00:00",
+          "count": 342
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-023BD661",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 195,
+      "start_ts": "2026-03-21T19:09:16.290Z",
+      "end_ts": "2026-03-21T19:09:25.191Z",
+      "duration_seconds": 8.9,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "msedgewebview2.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "msedgewebview2.exe",
+          "canonical_path": "c:\\program files (x86)\\microsoft\\edgewebview\\application\\146.0.3856.62\\msedgewebview2.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:16.290556+00:00",
+          "last_ts": "2026-03-21 19:09:25.191335+00:00",
+          "count": 195
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-007F2230",
+      "corr_type": "network_flow",
+      "unique_events": 3,
+      "total_occurrences": 188,
+      "start_ts": "2026-03-21T19:09:15.757Z",
+      "end_ts": "2026-03-21T19:09:35.402Z",
+      "duration_seconds": 19.65,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [
+        "nvcontainer.exe"
+      ],
+      "users": [
+        "NT AUTHORITY\\SYSTEM"
+      ],
+      "pids": [
+        5228
+      ],
+      "dest_ips": [
+        "224.0.0.251"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 5228,
+          "process_name": "nvcontainer.exe",
+          "user_name": "NT AUTHORITY\\SYSTEM",
+          "user_sid": "S-1-5-18",
+          "src_ip": "172.18.0.1",
+          "dst_ip": "224.0.0.251",
+          "src_port": 5353,
+          "dst_port": 5353,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:15.757488+00:00",
+          "last_ts": "2026-03-21 19:09:35.402894+00:00",
+          "count": 83
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 5228,
+          "process_name": "nvcontainer.exe",
+          "user_name": "NT AUTHORITY\\SYSTEM",
+          "user_sid": "S-1-5-18",
+          "src_ip": "192.168.56.1",
+          "dst_ip": "224.0.0.251",
+          "src_port": 5353,
+          "dst_port": 5353,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:16.088364+00:00",
+          "last_ts": "2026-03-21 19:09:35.371664+00:00",
+          "count": 54
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 5228,
+          "process_name": "nvcontainer.exe",
+          "user_name": "NT AUTHORITY\\SYSTEM",
+          "user_sid": "S-1-5-18",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "224.0.0.251",
+          "src_port": 5353,
+          "dst_port": 5353,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:18.317983+00:00",
+          "last_ts": "2026-03-21 19:09:34.653319+00:00",
+          "count": 51
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-0014684D",
+      "corr_type": "network_flow",
+      "unique_events": 8,
+      "total_occurrences": 38,
+      "start_ts": "2026-03-21T19:09:23.111Z",
+      "end_ts": "2026-03-21T19:09:35.275Z",
+      "duration_seconds": 12.16,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [
+        4
+      ],
+      "dest_ips": [
+        "224.0.0.252",
+        "224.77.77.77",
+        "239.255.255.250"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 4,
+          "src_ip": "172.18.0.1",
+          "dst_ip": "224.77.77.77",
+          "src_port": 137,
+          "dst_port": 137,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:23.111990+00:00",
+          "last_ts": "2026-03-21 19:09:28.306367+00:00",
+          "count": 3
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 4,
+          "src_ip": "192.168.56.1",
+          "dst_ip": "224.77.77.77",
+          "src_port": 137,
+          "dst_port": 137,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:23.920991+00:00",
+          "last_ts": "2026-03-21 19:09:24.100595+00:00",
+          "count": 3
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 4,
+          "src_ip": "192.168.56.1",
+          "dst_ip": "224.0.0.252",
+          "src_port": 137,
+          "dst_port": 137,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:24.021982+00:00",
+          "last_ts": "2026-03-21 19:09:26.738814+00:00",
+          "count": 9
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 4,
+          "src_ip": "172.18.0.1",
+          "dst_ip": "224.0.0.252",
+          "src_port": 137,
+          "dst_port": 137,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:28.141433+00:00",
+          "last_ts": "2026-03-21 19:09:28.460152+00:00",
+          "count": 9
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 4,
+          "src_ip": "192.168.1.4",
+          "dst_ip": "224.77.77.77",
+          "src_port": 137,
+          "dst_port": 137,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:29.750376+00:00",
+          "last_ts": "2026-03-21 19:09:29.750376+00:00"
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 4,
+          "src_ip": "192.168.1.4",
+          "dst_ip": "224.0.0.252",
+          "src_port": 137,
+          "dst_port": 137,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:34.616087+00:00",
+          "last_ts": "2026-03-21 19:09:34.616087+00:00"
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 4,
+          "src_ip": "192.168.56.1",
+          "dst_ip": "239.255.255.250",
+          "src_port": 137,
+          "dst_port": 137,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:35.125286+00:00",
+          "last_ts": "2026-03-21 19:09:35.262385+00:00",
+          "count": 6
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 4,
+          "src_ip": "172.18.0.1",
+          "dst_ip": "239.255.255.250",
+          "src_port": 137,
+          "dst_port": 137,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:35.153439+00:00",
+          "last_ts": "2026-03-21 19:09:35.275886+00:00",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-03D8FC1B",
+      "corr_type": "process_with_network",
+      "unique_events": 3,
+      "total_occurrences": 36,
+      "start_ts": "2026-03-21T19:09:17.195Z",
+      "end_ts": "2026-03-21T19:09:34.196Z",
+      "duration_seconds": 17.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect",
+        "process_start"
+      ],
+      "processes": [
+        "PerfWatson2.exe",
+        "perfwatson2.exe"
+      ],
+      "users": [
+        "SANTOSH\\msant"
+      ],
+      "pids": [
+        26164
+      ],
+      "dest_ips": [
+        "20.189.173.24"
+      ],
+      "protocols": [
+        "TCP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "perfwatson2.exe",
+          "canonical_path": "c:\\program files\\microsoft visual studio\\18\\community\\common7\\ide\\perfwatson2.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:17.195324+00:00",
+          "last_ts": "2026-03-21 19:09:34.196090+00:00",
+          "count": 9
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26164,
+          "process_name": "PerfWatson2.exe",
+          "user_name": "SANTOSH\\msant",
+          "user_sid": "S-1-5-21-2341183043-584530451-248146456-1001",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "20.189.173.24",
+          "src_port": 60419,
+          "dst_port": 443,
+          "protocol": "TCP",
+          "direction": "OUTBOUND",
+          "tcp_state": "SYN_SENT",
+          "first_ts": "2026-03-21 19:09:29.441022+00:00",
+          "last_ts": "2026-03-21 19:09:29.778662+00:00",
+          "count": 16
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26164,
+          "process_name": "PerfWatson2.exe",
+          "user_name": "SANTOSH\\msant",
+          "user_sid": "S-1-5-21-2341183043-584530451-248146456-1001",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "20.189.173.24",
+          "src_port": 60419,
+          "dst_port": 443,
+          "protocol": "TCP",
+          "direction": "INBOUND",
+          "tcp_state": "SYN_RECEIVED",
+          "first_ts": "2026-03-21 19:09:29.500584+00:00",
+          "last_ts": "2026-03-21 19:09:29.776746+00:00",
+          "count": 11
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-0A599C8F",
+      "corr_type": "network_flow",
+      "unique_events": 2,
+      "total_occurrences": 28,
+      "start_ts": "2026-03-21T19:09:29.830Z",
+      "end_ts": "2026-03-21T19:09:34.519Z",
+      "duration_seconds": 4.69,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "2603:1063:5:116::365:7ea3"
+      ],
+      "protocols": [
+        "TCP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2603:1063:5:116::365:7ea3",
+          "src_port": 61503,
+          "dst_port": 443,
+          "protocol": "TCP",
+          "direction": "OUTBOUND",
+          "tcp_state": "SYN_SENT",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:29.830365+00:00",
+          "last_ts": "2026-03-21 19:09:34.519314+00:00",
+          "count": 15
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2603:1063:5:116::365:7ea3",
+          "src_port": 61503,
+          "dst_port": 443,
+          "protocol": "TCP",
+          "direction": "INBOUND",
+          "tcp_state": "SYN_RECEIVED",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:29.836609+00:00",
+          "last_ts": "2026-03-21 19:09:34.519063+00:00",
+          "count": 13
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-2622C4DF",
+      "corr_type": "network_flow",
+      "unique_events": 2,
+      "total_occurrences": 18,
+      "start_ts": "2026-03-21T19:09:34.426Z",
+      "end_ts": "2026-03-21T19:09:34.565Z",
+      "duration_seconds": 0.14,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [
+        "svchost.exe"
+      ],
+      "users": [
+        "NT AUTHORITY\\SYSTEM"
+      ],
+      "pids": [
+        28376
+      ],
+      "dest_ips": [
+        "40.126.17.135"
+      ],
+      "protocols": [
+        "TCP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 28376,
+          "process_name": "svchost.exe",
+          "user_name": "NT AUTHORITY\\SYSTEM",
+          "user_sid": "S-1-5-18",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "40.126.17.135",
+          "src_port": 61504,
+          "dst_port": 443,
+          "protocol": "TCP",
+          "direction": "OUTBOUND",
+          "tcp_state": "SYN_SENT",
+          "first_ts": "2026-03-21 19:09:34.426386+00:00",
+          "last_ts": "2026-03-21 19:09:34.562099+00:00",
+          "count": 13
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 28376,
+          "process_name": "svchost.exe",
+          "user_name": "NT AUTHORITY\\SYSTEM",
+          "user_sid": "S-1-5-18",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "40.126.17.135",
+          "src_port": 61504,
+          "dst_port": 443,
+          "protocol": "TCP",
+          "direction": "INBOUND",
+          "tcp_state": "SYN_RECEIVED",
+          "first_ts": "2026-03-21 19:09:34.478023+00:00",
+          "last_ts": "2026-03-21 19:09:34.565631+00:00",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-16E65A38",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 17,
+      "start_ts": "2026-03-21T19:09:16.186Z",
+      "end_ts": "2026-03-21T19:09:17.189Z",
+      "duration_seconds": 1.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "titan.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "titan.exe",
+          "canonical_path": "c:\\users\\msant\\onedrive\\desktop\\new folder (5)\\out\\build\\x64-debug\\titan.exe",
+          "location_type": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:16.186261+00:00",
+          "last_ts": "2026-03-21 19:09:17.189027+00:00",
+          "count": 17
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-2D7D73AC",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 12,
+      "start_ts": "2026-03-21T19:09:16.354Z",
+      "end_ts": "2026-03-21T19:09:36.203Z",
+      "duration_seconds": 19.85,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "acpowernotification.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "acpowernotification.exe",
+          "canonical_path": "c:\\program files (x86)\\asus\\armourydevice\\dll\\acpowernotification\\acpowernotification.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:16.354319+00:00",
+          "last_ts": "2026-03-21 19:09:36.203331+00:00",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-159D8213",
+      "corr_type": "script_session",
+      "unique_events": 4,
+      "total_occurrences": 8,
+      "start_ts": "2026-03-19T17:22:22.000Z",
+      "end_ts": "2026-03-19T17:22:52.000Z",
+      "duration_seconds": 30.0,
+      "source_files": [
+        "titan_applog"
+      ],
+      "record_types": [
+        "script_execution"
+      ],
+      "processes": [
+        "powershell.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_applog",
+          "source": "PowerShell",
+          "record_type": "script_execution",
+          "process_name": "powershell.exe",
+          "script_content": ". 'C:\\Users\\msant\\OneDrive\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1'",
+          "first_ts": "2026-03-19 17:22:22+00:00",
+          "last_ts": "2026-03-19 17:22:52+00:00",
+          "count": 3
+        },
+        {
+          "source_file": "titan_applog",
+          "source": "PowerShell",
+          "record_type": "script_execution",
+          "process_name": "powershell.exe",
+          "script_content": "prompt",
+          "first_ts": "2026-03-19 17:22:31+00:00",
+          "last_ts": "2026-03-19 17:22:43+00:00",
+          "count": 3
+        },
+        {
+          "source_file": "titan_applog",
+          "source": "PowerShell",
+          "record_type": "script_execution",
+          "process_name": "powershell.exe",
+          "script_content": "ipconfig",
+          "first_ts": "2026-03-19 17:22:37+00:00",
+          "last_ts": "2026-03-19 17:22:37+00:00"
+        },
+        {
+          "source_file": "titan_applog",
+          "source": "PowerShell",
+          "record_type": "script_execution",
+          "process_name": "powershell.exe",
+          "script_content": "help",
+          "first_ts": "2026-03-19 17:22:40+00:00",
+          "last_ts": "2026-03-19 17:22:40+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-00AD02AB",
+      "corr_type": "network_flow",
+      "unique_events": 8,
+      "total_occurrences": 8,
+      "start_ts": "2026-03-21T20:17:46.935Z",
+      "end_ts": "2026-03-21T20:17:48.645Z",
+      "duration_seconds": 1.71,
+      "source_files": [
+        "titan_20260322_014746"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [
+        "brave.exe"
+      ],
+      "users": [],
+      "pids": [
+        26012
+      ],
+      "dest_ips": [
+        "129.227.206.5",
+        "2606:4700:83b0:7af8:173b:5:2dc1:f0a8",
+        "2606:4700:90d0:7af8:1776:503:2dc1:f0a8",
+        "3.173.21.63"
+      ],
+      "protocols": [
+        "HTTPS_TLS",
+        "UNKNOWN"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26012,
+          "process_name": "brave.exe",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2606:4700:83b0:7af8:173b:5:2dc1:f0a8",
+          "src_port": 54123,
+          "dst_port": 443,
+          "protocol": "HTTPS_TLS",
+          "direction": "OUTBOUND",
+          "tcp_state": "ESTABLISHED",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:46.935111+00:00",
+          "last_ts": "2026-03-21 20:17:46.935111+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26012,
+          "process_name": "brave.exe",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2606:4700:83b0:7af8:173b:5:2dc1:f0a8",
+          "src_port": 54123,
+          "dst_port": 443,
+          "protocol": "UNKNOWN",
+          "direction": "INBOUND",
+          "tcp_state": "ESTABLISHED",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:47.035174+00:00",
+          "last_ts": "2026-03-21 20:17:47.035174+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26012,
+          "process_name": "brave.exe",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "3.173.21.63",
+          "src_port": 55414,
+          "dst_port": 443,
+          "protocol": "HTTPS_TLS",
+          "direction": "OUTBOUND",
+          "tcp_state": "ESTABLISHED",
+          "first_ts": "2026-03-21 20:17:47.136550+00:00",
+          "last_ts": "2026-03-21 20:17:47.136550+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26012,
+          "process_name": "brave.exe",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "3.173.21.63",
+          "src_port": 55414,
+          "dst_port": 443,
+          "protocol": "UNKNOWN",
+          "direction": "INBOUND",
+          "tcp_state": "ESTABLISHED",
+          "first_ts": "2026-03-21 20:17:47.136742+00:00",
+          "last_ts": "2026-03-21 20:17:47.136742+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26012,
+          "process_name": "brave.exe",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2606:4700:90d0:7af8:1776:503:2dc1:f0a8",
+          "src_port": 50740,
+          "dst_port": 443,
+          "protocol": "HTTPS_TLS",
+          "direction": "OUTBOUND",
+          "tcp_state": "ESTABLISHED",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:47.539077+00:00",
+          "last_ts": "2026-03-21 20:17:47.539077+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26012,
+          "process_name": "brave.exe",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2606:4700:90d0:7af8:1776:503:2dc1:f0a8",
+          "src_port": 50740,
+          "dst_port": 443,
+          "protocol": "UNKNOWN",
+          "direction": "INBOUND",
+          "tcp_state": "ESTABLISHED",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:47.640047+00:00",
+          "last_ts": "2026-03-21 20:17:47.640047+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26012,
+          "process_name": "brave.exe",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "129.227.206.5",
+          "src_port": 53044,
+          "dst_port": 443,
+          "protocol": "HTTPS_TLS",
+          "direction": "OUTBOUND",
+          "tcp_state": "ESTABLISHED",
+          "first_ts": "2026-03-21 20:17:48.544104+00:00",
+          "last_ts": "2026-03-21 20:17:48.544104+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 26012,
+          "process_name": "brave.exe",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "129.227.206.5",
+          "src_port": 53044,
+          "dst_port": 443,
+          "protocol": "UNKNOWN",
+          "direction": "INBOUND",
+          "tcp_state": "ESTABLISHED",
+          "first_ts": "2026-03-21 20:17:48.645120+00:00",
+          "last_ts": "2026-03-21 20:17:48.645120+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-0CC231D8",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 7,
+      "start_ts": "2026-03-21T19:09:16.204Z",
+      "end_ts": "2026-03-21T19:09:22.189Z",
+      "duration_seconds": 5.98,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "armourycrate.usersessionhelper.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "armourycrate.usersessionhelper.exe",
+          "canonical_path": "c:\\program files\\asus\\armoury crate service\\armourycrate.usersessionhelper.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:16.204688+00:00",
+          "last_ts": "2026-03-21 19:09:22.189589+00:00",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-1A50AD39",
+      "corr_type": "network_flow",
+      "unique_events": 4,
+      "total_occurrences": 6,
+      "start_ts": "2026-03-21T19:09:29.836Z",
+      "end_ts": "2026-03-21T20:17:53.973Z",
+      "duration_seconds": 4104.14,
+      "source_files": [
+        "titan_20260322_003915",
+        "titan_20260322_014746"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "fe80::be51:5fff:fe9c:e4e3"
+      ],
+      "protocols": [
+        "ICMP",
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "fe80::8548:3c4e:90ba:a53f",
+          "dst_ip": "fe80::be51:5fff:fe9c:e4e3",
+          "src_port": 0,
+          "dst_port": 0,
+          "protocol": "UDP",
+          "direction": "INBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:29.836722+00:00",
+          "last_ts": "2026-03-21 19:09:29.836722+00:00"
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "fe80::8548:3c4e:90ba:a53f",
+          "dst_ip": "fe80::be51:5fff:fe9c:e4e3",
+          "src_port": 0,
+          "dst_port": 0,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:29.836768+00:00",
+          "last_ts": "2026-03-21 19:09:29.836768+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "fe80::8548:3c4e:90ba:a53f",
+          "dst_ip": "fe80::be51:5fff:fe9c:e4e3",
+          "src_port": 0,
+          "dst_port": 0,
+          "protocol": "ICMP",
+          "direction": "INBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:48.947825+00:00",
+          "last_ts": "2026-03-21 20:17:53.973226+00:00",
+          "count": 2
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "fe80::8548:3c4e:90ba:a53f",
+          "dst_ip": "fe80::be51:5fff:fe9c:e4e3",
+          "src_port": 0,
+          "dst_port": 0,
+          "protocol": "ICMP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:48.947933+00:00",
+          "last_ts": "2026-03-21 20:17:53.973476+00:00",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-93368B3A",
+      "corr_type": "network_flow",
+      "unique_events": 4,
+      "total_occurrences": 4,
+      "start_ts": "2026-03-21T19:09:16.917Z",
+      "end_ts": "2026-03-21T20:17:50.957Z",
+      "duration_seconds": 4114.04,
+      "source_files": [
+        "titan_20260322_003915",
+        "titan_20260322_014746"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "2401:4900:88cb:6ba9:be51:5fff:fe9c:e4e3"
+      ],
+      "protocols": [
+        "ICMP",
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2401:4900:88cb:6ba9:be51:5fff:fe9c:e4e3",
+          "src_port": 0,
+          "dst_port": 0,
+          "protocol": "UDP",
+          "direction": "INBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:16.917711+00:00",
+          "last_ts": "2026-03-21 19:09:16.917711+00:00"
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2401:4900:88cb:6ba9:be51:5fff:fe9c:e4e3",
+          "src_port": 0,
+          "dst_port": 0,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:16.917787+00:00",
+          "last_ts": "2026-03-21 19:09:16.917787+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2401:4900:88cb:6ba9:be51:5fff:fe9c:e4e3",
+          "src_port": 0,
+          "dst_port": 0,
+          "protocol": "ICMP",
+          "direction": "INBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:50.957330+00:00",
+          "last_ts": "2026-03-21 20:17:50.957330+00:00"
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2401:4900:88cb:6ba9:be51:5fff:fe9c:e4e3",
+          "src_port": 0,
+          "dst_port": 0,
+          "protocol": "ICMP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:50.957543+00:00",
+          "last_ts": "2026-03-21 20:17:50.957543+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-6B45C955",
+      "corr_type": "network_flow",
+      "unique_events": 2,
+      "total_occurrences": 3,
+      "start_ts": "2026-03-21T20:17:51.359Z",
+      "end_ts": "2026-03-21T20:17:51.359Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_014746"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "2404:6800:4007:832::200a"
+      ],
+      "protocols": [
+        "HTTPS_TLS"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2404:6800:4007:832::200a",
+          "src_port": 58684,
+          "dst_port": 443,
+          "protocol": "HTTPS_TLS",
+          "direction": "INBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:51.359582+00:00",
+          "last_ts": "2026-03-21 20:17:51.359765+00:00",
+          "count": 2
+        },
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "2401:4900:88cb:6ba9:a8c3:8cce:2495:5e25",
+          "dst_ip": "2404:6800:4007:832::200a",
+          "src_port": 58684,
+          "dst_port": 443,
+          "protocol": "HTTPS_TLS",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:51.359979+00:00",
+          "last_ts": "2026-03-21 20:17:51.359979+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-007B7CB4",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 2,
+      "start_ts": "2026-03-21T19:09:16.187Z",
+      "end_ts": "2026-03-21T19:09:25.194Z",
+      "duration_seconds": 9.01,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "searchhost.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "searchhost.exe",
+          "canonical_path": "c:\\windows\\systemapps\\microsoftwindows.client.cbs_cw5n1h2txyewy\\searchhost.exe",
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:16.187561+00:00",
+          "last_ts": "2026-03-21 19:09:25.194809+00:00",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-69529771",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 2,
+      "start_ts": "2026-03-21T19:09:18.228Z",
+      "end_ts": "2026-03-21T19:09:28.198Z",
+      "duration_seconds": 9.97,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "servicehub.intellicodemodelservice.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "servicehub.intellicodemodelservice.exe",
+          "canonical_path": "c:\\program files\\microsoft visual studio\\18\\community\\common7\\servicehub\\hosts\\servicehub.host.netfx.x64\\servicehub.intellicodemodelservice.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:18.228388+00:00",
+          "last_ts": "2026-03-21 19:09:28.198526+00:00",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-89CB04D6",
+      "corr_type": "network_flow",
+      "unique_events": 2,
+      "total_occurrences": 35,
+      "start_ts": "2026-03-21T19:09:18.311Z",
+      "end_ts": "2026-03-21T19:09:18.318Z",
+      "duration_seconds": 0.01,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "fe80::be51:5fff:fe9c:e4e3"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "fe80::8548:3c4e:90ba:a53f",
+          "dst_ip": "fe80::be51:5fff:fe9c:e4e3",
+          "src_port": 55015,
+          "dst_port": 53,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:18.311840+00:00",
+          "last_ts": "2026-03-21 19:09:18.311840+00:00"
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "fe80::8548:3c4e:90ba:a53f",
+          "dst_ip": "fe80::be51:5fff:fe9c:e4e3",
+          "src_port": 55015,
+          "dst_port": 53,
+          "protocol": "UDP",
+          "direction": "INBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:18.318145+00:00",
+          "last_ts": "2026-03-21 19:09:18.318145+00:00"
+        }
+      ],
+      "repeat_count": 18
+    },
+    {
+      "corr_id": "CG-2F8D37F7",
+      "corr_type": "network_flow",
+      "unique_events": 2,
+      "total_occurrences": 11,
+      "start_ts": "2026-03-21T19:09:18.346Z",
+      "end_ts": "2026-03-21T19:09:18.347Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "192.168.1.1"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "192.168.1.1",
+          "src_port": 58950,
+          "dst_port": 53,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:18.346698+00:00",
+          "last_ts": "2026-03-21 19:09:18.346698+00:00"
+        },
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "192.168.1.1",
+          "src_port": 58950,
+          "dst_port": 53,
+          "protocol": "UDP",
+          "direction": "INBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:18.347070+00:00",
+          "last_ts": "2026-03-21 19:09:18.347070+00:00"
+        }
+      ],
+      "repeat_count": 6
+    },
+    {
+      "corr_id": "CG-08AFC7A7",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 2,
+      "start_ts": "2026-03-21T19:09:19.245Z",
+      "end_ts": "2026-03-21T19:09:19.273Z",
+      "duration_seconds": 0.03,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "services.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "services.exe",
+          "canonical_path": "c:\\windows\\system32\\services.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:19.245632+00:00",
+          "last_ts": "2026-03-21 19:09:19.273430+00:00",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-36DB6AA8",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 2,
+      "start_ts": "2026-03-21T19:09:19.321Z",
+      "end_ts": "2026-03-21T19:09:19.323Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "unsecapp.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "unsecapp.exe",
+          "canonical_path": "c:\\windows\\system32\\wbem\\unsecapp.exe",
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:19.321109+00:00",
+          "last_ts": "2026-03-21 19:09:19.323031+00:00",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-A4369B56",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 2,
+      "start_ts": "2026-03-21T19:09:21.191Z",
+      "end_ts": "2026-03-21T19:09:25.194Z",
+      "duration_seconds": 4.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "servicehost.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "servicehost.exe",
+          "canonical_path": "c:\\program files\\mcafee\\webadvisor\\servicehost.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:21.191915+00:00",
+          "last_ts": "2026-03-21 19:09:25.194081+00:00",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-7FACAC5F",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 2,
+      "start_ts": "2026-03-21T19:09:22.194Z",
+      "end_ts": "2026-03-21T19:09:22.211Z",
+      "duration_seconds": 0.02,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "lsaiso.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "lsaiso.exe",
+          "canonical_path": "c:\\windows\\system32\\lsaiso.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:22.194231+00:00",
+          "last_ts": "2026-03-21 19:09:22.211163+00:00",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-76B6DEC4",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 2,
+      "start_ts": "2026-03-21T19:09:24.194Z",
+      "end_ts": "2026-03-21T19:09:24.270Z",
+      "duration_seconds": 0.08,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "asussoftwaremanageragent.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "asussoftwaremanageragent.exe",
+          "canonical_path": "c:\\windows\\system32\\driverstore\\filerepository\\asussci2.inf_amd64_d5b92bc7afd7593a\\asussoftwaremanager\\asussoftwaremanageragent.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:24.194296+00:00",
+          "last_ts": "2026-03-21 19:09:24.270592+00:00",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-96A21596",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 91,
+      "start_ts": "2026-03-21T19:09:16.274Z",
+      "end_ts": "2026-03-21T19:09:16.274Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "svchost.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "svchost.exe",
+          "canonical_path": "c:\\windows\\system32\\svchost.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:16.274911+00:00",
+          "last_ts": "2026-03-21 19:09:16.274911+00:00"
+        }
+      ],
+      "repeat_count": 91
+    },
+    {
+      "corr_id": "CG-0634513B",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 2,
+      "start_ts": "2026-03-21T19:09:16.324Z",
+      "end_ts": "2026-03-21T19:09:16.324Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "wmiprvse.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "wmiprvse.exe",
+          "canonical_path": "c:\\windows\\system32\\wbem\\wmiprvse.exe",
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:16.324531+00:00",
+          "last_ts": "2026-03-21 19:09:16.324531+00:00"
+        }
+      ],
+      "repeat_count": 2
+    },
+    {
+      "corr_id": "CG-D16F4930",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 3,
+      "start_ts": "2026-03-21T19:09:16.384Z",
+      "end_ts": "2026-03-21T19:09:16.384Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "runtimebroker.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "runtimebroker.exe",
+          "canonical_path": "c:\\windows\\system32\\runtimebroker.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:16.384798+00:00",
+          "last_ts": "2026-03-21 19:09:16.384798+00:00"
+        }
+      ],
+      "repeat_count": 3
+    },
+    {
+      "corr_id": "CG-E29FFE15",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T19:09:16.398Z",
+      "end_ts": "2026-03-21T19:09:16.398Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "devhub.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "devhub.exe",
+          "canonical_path": "c:\\program files\\microsoft visual studio\\18\\community\\common7\\servicehub\\hosts\\servicehub.host.extensibility.amd64\\net8.0-windows8.0\\devhub.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:16.398936+00:00",
+          "last_ts": "2026-03-21 19:09:16.398936+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-3004E60E",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T19:09:16.416Z",
+      "end_ts": "2026-03-21T19:09:16.416Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "dllhost.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "dllhost.exe",
+          "canonical_path": "c:\\windows\\system32\\dllhost.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:16.416042+00:00",
+          "last_ts": "2026-03-21 19:09:16.416042+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-4020049A",
+      "corr_type": "network_flow",
+      "unique_events": 1,
+      "total_occurrences": 188,
+      "start_ts": "2026-03-21T19:09:17.150Z",
+      "end_ts": "2026-03-21T19:09:17.150Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "ff02::fb"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "fe80::c567:c54b:a58:1781",
+          "dst_ip": "ff02::fb",
+          "src_port": 5353,
+          "dst_port": 5353,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:17.150600+00:00",
+          "last_ts": "2026-03-21 19:09:17.150600+00:00"
+        }
+      ],
+      "repeat_count": 188
+    },
+    {
+      "corr_id": "CG-4FA4E3D1",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 19,
+      "start_ts": "2026-03-21T19:09:17.191Z",
+      "end_ts": "2026-03-21T19:09:17.191Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "location_type": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:17.191585+00:00",
+          "last_ts": "2026-03-21 19:09:17.191585+00:00"
+        }
+      ],
+      "repeat_count": 19
+    },
+    {
+      "corr_id": "CG-1E98F357",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T19:09:18.189Z",
+      "end_ts": "2026-03-21T19:09:18.189Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "devenv.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "devenv.exe",
+          "canonical_path": "c:\\program files\\microsoft visual studio\\18\\community\\common7\\ide\\devenv.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:18.189689+00:00",
+          "last_ts": "2026-03-21 19:09:18.189689+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-EA0E45AF",
+      "corr_type": "network_flow",
+      "unique_events": 1,
+      "total_occurrences": 44,
+      "start_ts": "2026-03-21T19:09:18.798Z",
+      "end_ts": "2026-03-21T19:09:18.798Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "ff02::1:3"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "fe80::9d1f:3264:32eb:c0fd",
+          "dst_ip": "ff02::1:3",
+          "src_port": 53031,
+          "dst_port": 5355,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:18.798723+00:00",
+          "last_ts": "2026-03-21 19:09:18.798723+00:00"
+        }
+      ],
+      "repeat_count": 44
+    },
+    {
+      "corr_id": "CG-81576C8F",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 3,
+      "start_ts": "2026-03-21T19:09:19.230Z",
+      "end_ts": "2026-03-21T19:09:19.230Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "sihost.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "sihost.exe",
+          "canonical_path": "c:\\windows\\system32\\sihost.exe",
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:19.230277+00:00",
+          "last_ts": "2026-03-21 19:09:19.230277+00:00"
+        }
+      ],
+      "repeat_count": 3
+    },
+    {
+      "corr_id": "CG-B66ED99A",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T19:09:19.257Z",
+      "end_ts": "2026-03-21T19:09:19.257Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "lsass.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "lsass.exe",
+          "canonical_path": "c:\\windows\\system32\\lsass.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:19.257409+00:00",
+          "last_ts": "2026-03-21 19:09:19.257409+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-D378B205",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T19:09:19.306Z",
+      "end_ts": "2026-03-21T19:09:19.306Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "castsrv.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "castsrv.exe",
+          "canonical_path": "c:\\windows\\system32\\castsrv.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:19.306922+00:00",
+          "last_ts": "2026-03-21 19:09:19.306922+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-F34E0D89",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T19:09:21.252Z",
+      "end_ts": "2026-03-21T19:09:21.252Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "wininit.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "wininit.exe",
+          "canonical_path": "c:\\windows\\system32\\wininit.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:21.252975+00:00",
+          "last_ts": "2026-03-21 19:09:21.252975+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-78F1C00F",
+      "corr_type": "network_flow",
+      "unique_events": 1,
+      "total_occurrences": 11,
+      "start_ts": "2026-03-21T19:09:22.815Z",
+      "end_ts": "2026-03-21T19:09:22.815Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "224.77.77.77"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "172.18.0.1",
+          "dst_ip": "224.77.77.77",
+          "src_port": 62544,
+          "dst_port": 12177,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:22.815339+00:00",
+          "last_ts": "2026-03-21 19:09:22.815339+00:00"
+        }
+      ],
+      "repeat_count": 11
+    },
+    {
+      "corr_id": "CG-1FF96749",
+      "corr_type": "network_flow",
+      "unique_events": 1,
+      "total_occurrences": 44,
+      "start_ts": "2026-03-21T19:09:23.759Z",
+      "end_ts": "2026-03-21T19:09:23.759Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "224.0.0.252"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "192.168.56.1",
+          "dst_ip": "224.0.0.252",
+          "src_port": 53031,
+          "dst_port": 5355,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 19:09:23.759868+00:00",
+          "last_ts": "2026-03-21 19:09:23.759868+00:00"
+        }
+      ],
+      "repeat_count": 44
+    },
+    {
+      "corr_id": "CG-606DDFE9",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T19:09:26.196Z",
+      "end_ts": "2026-03-21T19:09:26.196Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "crossdeviceservice.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "crossdeviceservice.exe",
+          "canonical_path": "c:\\program files\\windowsapps\\microsoftwindows.crossdevice_1.26012.79.0_x64__cw5n1h2txyewy\\crossdeviceservice.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:26.196457+00:00",
+          "last_ts": "2026-03-21 19:09:26.196457+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-80C11BFF",
+      "corr_type": "network_flow",
+      "unique_events": 1,
+      "total_occurrences": 684,
+      "start_ts": "2026-03-21T19:09:35.003Z",
+      "end_ts": "2026-03-21T19:09:35.003Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "ff02::c"
+      ],
+      "protocols": [
+        "UDP"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "fe80::9d1f:3264:32eb:c0fd",
+          "dst_ip": "ff02::c",
+          "src_port": 1900,
+          "dst_port": 1900,
+          "protocol": "UDP",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 19:09:35.003191+00:00",
+          "last_ts": "2026-03-21 19:09:35.003191+00:00"
+        }
+      ],
+      "repeat_count": 684
+    },
+    {
+      "corr_id": "CG-8855695F",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T19:09:35.198Z",
+      "end_ts": "2026-03-21T19:09:35.198Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "uihost.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "uihost.exe",
+          "canonical_path": "c:\\program files\\mcafee\\webadvisor\\uihost.exe",
+          "signature_valid": true,
+          "location_type": "KNOWN_USER",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:35.198130+00:00",
+          "last_ts": "2026-03-21 19:09:35.198130+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-D03AC7B5",
+      "corr_type": "process_session",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T19:09:37.197Z",
+      "end_ts": "2026-03-21T19:09:37.197Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_003915"
+      ],
+      "record_types": [
+        "process_start"
+      ],
+      "processes": [
+        "securityhealthservice.exe"
+      ],
+      "users": [],
+      "pids": [],
+      "dest_ips": [],
+      "protocols": [],
+      "events": [
+        {
+          "source_file": "titan_20260322_003915",
+          "source": "etw_kernel_process",
+          "record_type": "process_start",
+          "process_name": "securityhealthservice.exe",
+          "canonical_path": "c:\\windows\\system32\\securityhealthservice.exe",
+          "signature_valid": true,
+          "location_type": "SYSTEM",
+          "new_child_flag": true,
+          "first_ts": "2026-03-21 19:09:37.197873+00:00",
+          "last_ts": "2026-03-21 19:09:37.197873+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-AB04FFDE",
+      "corr_type": "network_flow",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T20:17:47.337Z",
+      "end_ts": "2026-03-21T20:17:47.337Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_014746"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [
+        "svchost.exe"
+      ],
+      "users": [],
+      "pids": [
+        10480
+      ],
+      "dest_ips": [
+        "10.14.146.163"
+      ],
+      "protocols": [
+        "UNKNOWN"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "pid": 10480,
+          "process_name": "svchost.exe",
+          "src_ip": "192.168.1.4",
+          "dst_ip": "10.14.146.163",
+          "src_port": 55415,
+          "dst_port": 7680,
+          "protocol": "UNKNOWN",
+          "direction": "OUTBOUND",
+          "tcp_state": "SYN_SENT",
+          "first_ts": "2026-03-21 20:17:47.337366+00:00",
+          "last_ts": "2026-03-21 20:17:47.337366+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-14608314",
+      "corr_type": "network_flow",
+      "unique_events": 1,
+      "total_occurrences": 4,
+      "start_ts": "2026-03-21T20:17:47.640Z",
+      "end_ts": "2026-03-21T20:17:47.640Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_014746"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "224.77.77.77"
+      ],
+      "protocols": [
+        "UNKNOWN"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "172.18.0.1",
+          "dst_ip": "224.77.77.77",
+          "src_port": 62544,
+          "dst_port": 12177,
+          "protocol": "UNKNOWN",
+          "direction": "OUTBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 20:17:47.640920+00:00",
+          "last_ts": "2026-03-21 20:17:47.640920+00:00"
+        }
+      ],
+      "repeat_count": 4
+    },
+    {
+      "corr_id": "CG-EF19A5EB",
+      "corr_type": "network_flow",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T20:17:51.963Z",
+      "end_ts": "2026-03-21T20:17:51.963Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_014746"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "fe80::94ae:f9ff:fe80:4f4f"
+      ],
+      "protocols": [
+        "UNKNOWN"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "ff02::fb",
+          "dst_ip": "fe80::94ae:f9ff:fe80:4f4f",
+          "src_port": 5353,
+          "dst_port": 5353,
+          "protocol": "UNKNOWN",
+          "direction": "INBOUND",
+          "tcp_state": "UNKNOWN",
+          "ipv6": true,
+          "first_ts": "2026-03-21 20:17:51.963311+00:00",
+          "last_ts": "2026-03-21 20:17:51.963311+00:00"
+        }
+      ]
+    },
+    {
+      "corr_id": "CG-55822E11",
+      "corr_type": "network_flow",
+      "unique_events": 1,
+      "total_occurrences": 1,
+      "start_ts": "2026-03-21T20:17:51.963Z",
+      "end_ts": "2026-03-21T20:17:51.963Z",
+      "duration_seconds": 0.0,
+      "source_files": [
+        "titan_20260322_014746"
+      ],
+      "record_types": [
+        "network_connect"
+      ],
+      "processes": [],
+      "users": [],
+      "pids": [],
+      "dest_ips": [
+        "192.168.1.6"
+      ],
+      "protocols": [
+        "UNKNOWN"
+      ],
+      "events": [
+        {
+          "source_file": "titan_20260322_014746",
+          "source": "npcap_live",
+          "record_type": "network_connect",
+          "src_ip": "224.0.0.251",
+          "dst_ip": "192.168.1.6",
+          "src_port": 5353,
+          "dst_port": 5353,
+          "protocol": "UNKNOWN",
+          "direction": "INBOUND",
+          "tcp_state": "UNKNOWN",
+          "first_ts": "2026-03-21 20:17:51.963449+00:00",
+          "last_ts": "2026-03-21 20:17:51.963449+00:00"
+        }
+      ]
+    }
+  ]
+}

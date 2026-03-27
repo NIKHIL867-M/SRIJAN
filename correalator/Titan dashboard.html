@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TITAN — Correlation Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:ital,wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg0:#07091a;--bg1:#0d1528;--bg2:#111e35;--bg3:#172240;
+    --border:#1c2e4a;--border2:#243a5e;
+    --cyan:#00c8e8;--cyan2:#0099b8;
+    --text1:#e2e8f0;--text2:#94a3b8;--text3:#475569;
+  }
+  html,body{background:var(--bg0);color:var(--text1);font-family:'DM Sans',sans-serif;min-height:100vh}
+  .mono{font-family:'JetBrains Mono',monospace}
+
+  /* ── DOT GRID ── */
+  .dot-grid{
+    background-image:radial-gradient(circle,#1a3050 1px,transparent 1px);
+    background-size:30px 30px;
+  }
+
+  /* ── ANIMATED DROP ZONE BORDER ── */
+  @keyframes spin-border{to{--angle:360deg}}
+  @property --angle{syntax:'<angle>';initial-value:0deg;inherits:false}
+  .drop-border{
+    border-radius:18px;padding:2px;
+    background:conic-gradient(from var(--angle),#00c8e8,#7c3aed,#ec4899,#00c8e8);
+    animation:spin-border 3s linear infinite;
+  }
+  .drop-inner{background:var(--bg0);border-radius:16px}
+
+  /* ── GLOW PULSE ── */
+  @keyframes glow-pulse{0%,100%{box-shadow:0 0 24px rgba(0,200,232,.08)}50%{box-shadow:0 0 48px rgba(0,200,232,.22)}}
+  .glow-pulse{animation:glow-pulse 2.5s ease-in-out infinite}
+
+  /* ── TRANSITIONS ── */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideLeft{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+  @keyframes scaleIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+
+  .anim-fade-up{animation:fadeUp .5s ease both}
+  .anim-scale{animation:scaleIn .4s ease both}
+
+  .stag-1{animation:fadeUp .5s .05s ease both;opacity:0}
+  .stag-2{animation:fadeUp .5s .15s ease both;opacity:0}
+  .stag-3{animation:fadeUp .5s .25s ease both;opacity:0}
+  .stag-4{animation:fadeUp .5s .35s ease both;opacity:0}
+  .stag-5{animation:fadeUp .5s .45s ease both;opacity:0}
+
+  /* ── ROW STAGGER ── */
+  @keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+  .row-anim{animation:rowIn .3s ease both;opacity:0}
+
+  /* ── DETAIL PANEL ── */
+  .detail-wrap{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+  .detail-wrap.open{max-height:800px}
+
+  /* ── STAT CARD ── */
+  .stat-card{
+    background:var(--bg1);border:1px solid var(--border);border-radius:12px;
+    padding:18px 22px;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:default;
+  }
+  .stat-card:hover{border-color:var(--cyan2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,200,232,.08)}
+
+  /* ── FILTER PILLS ── */
+  .f-pill{
+    padding:5px 15px;border-radius:20px;font-size:12px;cursor:pointer;
+    border:1px solid var(--border);color:var(--text3);background:transparent;
+    transition:all .15s;font-family:'DM Sans',sans-serif;
+  }
+  .f-pill:hover{border-color:var(--cyan2);color:#7dd3fc}
+  .f-pill.active{background:#0f2a4a;border-color:var(--cyan);color:#bae6fd}
+
+  /* ── TABLE ROW ── */
+  .g-row{cursor:pointer;border-bottom:1px solid rgba(28,46,74,.5);transition:background .15s}
+  .g-row:hover .row-inner{background:rgba(14,30,60,.5)}
+  .g-row.selected .row-inner{background:rgba(14,30,60,.7);border-left:2px solid var(--cyan)}
+  .row-inner{padding:11px 18px;transition:background .15s, border-left .15s}
+
+  /* ── BADGES ── */
+  .badge{font-size:11px;padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+  .b-net{background:#0a2347;color:#60a5fa;border:1px solid #1e3a8a}
+  .b-proc{background:#052e1c;color:#34d399;border:1px solid #065f46}
+  .b-pn{background:#1e1b4b;color:#a78bfa;border:1px solid #3730a3}
+  .b-scr{background:#431407;color:#fb923c;border:1px solid #9a3412}
+  .b-full{background:#450a0a;color:#f87171;border:1px solid #991b1b}
+  .b-mix{background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+
+  /* ── SEARCH ── */
+  .search-box{
+    background:var(--bg1);border:1px solid var(--border);color:var(--text1);
+    padding:8px 14px;border-radius:8px;font-size:13px;width:260px;outline:none;
+    transition:border-color .2s;font-family:'DM Sans',sans-serif;
+  }
+  .search-box:focus{border-color:var(--cyan)}
+  .search-box::placeholder{color:var(--text3)}
+
+  /* ── TIMELINE ── */
+  .tl-tip{
+    position:absolute;background:var(--bg1);border:1px solid var(--border2);
+    border-radius:8px;padding:8px 12px;font-size:11px;pointer-events:none;
+    z-index:100;white-space:nowrap;display:none;
+    font-family:'JetBrains Mono',monospace;box-shadow:0 4px 16px rgba(0,0,0,.4);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar{width:4px;height:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+  /* ── CHART CONTAINER ── */
+  .chart-wrap{position:relative;height:165px}
+
+  /* ── HEADER ── */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(7,9,26,.88);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+  }
+
+  /* ── SCAN LINE EFFECT on landing ── */
+  @keyframes scan{from{top:-10%}to{top:110%}}
+  .scan-line{
+    position:absolute;left:0;width:100%;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(0,200,232,.3),transparent);
+    animation:scan 4s linear infinite;pointer-events:none;
+  }
+
+  /* ── PULSE DOT ── */
+  @keyframes ping{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.2);opacity:0}}
+  .dot-ping::after{
+    content:'';position:absolute;inset:0;border-radius:50%;
+    border:1px solid currentColor;animation:ping 1.5s ease-out infinite;
+  }
+
+  /* ── NUMBER HIGHLIGHT ── */
+  .num-highlight{
+    background:linear-gradient(135deg,var(--cyan),#7c3aed);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+
+  /* ── EVENT LIST ── */
+  .ev-row{
+    display:flex;align-items:center;gap:12px;padding:7px 0;
+    border-bottom:1px solid rgba(28,46,74,.3);
+    transition:background .1s;
+  }
+  .ev-row:last-child{border-bottom:none}
+  .ev-row:hover{background:rgba(14,30,60,.4)}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ LANDING ══════════════════ -->
+<div id="landing" class="dot-grid relative min-h-screen flex flex-col items-center justify-center gap-10 p-8 overflow-hidden">
+  <div class="scan-line"></div>
+
+  <!-- Logo -->
+  <div class="text-center anim-scale" style="animation-delay:.1s">
+    <div class="mono text-[56px] font-bold text-white tracking-[.15em] leading-none">TITAN</div>
+    <div class="text-xs tracking-[.4em] uppercase mt-2" style="color:var(--text3)">Correlation Dashboard · v4.1</div>
+  </div>
+
+  <!-- Drop zone -->
+  <div class="w-full max-w-sm anim-fade-up" style="animation-delay:.25s">
+    <div class="drop-border glow-pulse">
+      <div class="drop-inner p-12 text-center cursor-pointer select-none transition-all"
+           id="dropZone"
+           ondragover="onDragOver(event)"
+           ondragleave="onDragLeave(event)"
+           ondrop="onDrop(event)"
+           onclick="document.getElementById('fi').click()">
+        <div style="font-size:36px;margin-bottom:12px;color:var(--cyan)">↓</div>
+        <div style="color:var(--text1);font-size:14px;font-weight:500;margin-bottom:6px">
+          Drop your <span class="mono" style="color:var(--cyan)">correlated_events.json</span> here
+        </div>
+        <div style="color:var(--text3);font-size:12px">or click to browse files</div>
+        <input type="file" id="fi" accept=".json" class="hidden" onchange="onFileInput(event)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Info chips -->
+  <div class="flex gap-3 flex-wrap justify-center anim-fade-up" style="animation-delay:.4s">
+    <span class="mono text-xs px-3 py-1 rounded-full" style="background:var(--bg2);color:var(--text3);border:1px solid var(--border)">no server required</span>
+    <span class="mono text-xs px-3 py-1 rounded-full" style="background:var(--bg2);color:var(--text3);border:1px solid var(--border)">works offline</span>
+    <span class="mono text-xs px-3 py-1 rounded-full" style="background:var(--bg2);color:var(--text3);border:1px solid var(--border)">TITAN correlator output</span>
+  </div>
+</div>
+
+<!-- ══════════════════ DASHBOARD ══════════════════ -->
+<div id="dashboard" class="hidden min-h-screen">
+
+  <!-- TOP BAR -->
+  <div class="topbar stag-1">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="mono font-bold text-lg text-white tracking-widest">TITAN</span>
+        <span style="color:var(--border2)">·</span>
+        <span class="text-xs" style="color:var(--text3)">Correlation Dashboard</span>
+        <span style="color:var(--border2)">·</span>
+        <span id="hdrFile" class="mono text-xs" style="color:var(--cyan)"></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="hdrGenAt" class="mono text-xs" style="color:var(--text3)"></span>
+        <button onclick="resetAll()" class="text-xs px-3 py-1.5 rounded-lg transition-all"
+                style="border:1px solid var(--border);color:var(--text3);background:transparent"
+                onmouseover="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'"
+                onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text3)'">
+          ↩ load new file
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-7 space-y-6">
+
+    <!-- A: STATS ROW -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 stag-2">
+      <div class="stat-card">
+        <div class="text-xs uppercase tracking-widest mb-2" style="color:var(--text3)">Total events</div>
+        <div class="mono text-3xl font-bold num-highlight" id="sTotal">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs uppercase tracking-widest mb-2" style="color:var(--text3)">Groups</div>
+        <div class="mono text-3xl font-bold" style="color:#60a5fa" id="sGroups">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs uppercase tracking-widest mb-2" style="color:var(--text3)">Unique stored</div>
+        <div class="mono text-3xl font-bold" style="color:#a78bfa" id="sUnique">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs uppercase tracking-widest mb-2" style="color:var(--text3)">Session span</div>
+        <div class="mono text-3xl font-bold" style="color:#34d399" id="sSpan">—</div>
+      </div>
+    </div>
+
+    <!-- B + C: CHART + TIMELINE -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 stag-3">
+
+      <!-- B: Chart (2 cols) -->
+      <div class="md:col-span-2 rounded-xl p-5" style="background:var(--bg1);border:1px solid var(--border)">
+        <div class="text-xs uppercase tracking-widest mb-4" style="color:var(--text3)">Group breakdown</div>
+        <div class="chart-wrap">
+          <canvas id="typeChart"></canvas>
+        </div>
+      </div>
+
+      <!-- C: Timeline (3 cols) -->
+      <div class="md:col-span-3 rounded-xl p-5" style="background:var(--bg1);border:1px solid var(--border)">
+        <div class="flex items-center justify-between mb-1">
+          <div class="text-xs uppercase tracking-widest" style="color:var(--text3)">Activity timeline</div>
+          <div class="text-xs" style="color:var(--text3)">dot size = event count · hover for info · click to jump</div>
+        </div>
+        <div class="relative mt-4" style="height:90px">
+          <svg id="tlSvg" width="100%" height="100%" style="overflow:visible"></svg>
+          <div id="tlTip" class="tl-tip"></div>
+        </div>
+        <div id="tlLegend" class="flex flex-wrap gap-4 mt-4 pt-3" style="border-top:1px solid var(--border)"></div>
+      </div>
+    </div>
+
+    <!-- D: TABLE -->
+    <div class="stag-4">
+      <!-- Filter bar -->
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <button class="f-pill active" onclick="setFilter('all',this)">all</button>
+        <button class="f-pill" onclick="setFilter('network_flow',this)">network</button>
+        <button class="f-pill" onclick="setFilter('process_session',this)">process</button>
+        <button class="f-pill" onclick="setFilter('process_with_network',this)">proc + net</button>
+        <button class="f-pill" onclick="setFilter('script_session',this)">script</button>
+        <div class="flex-1 min-w-4"></div>
+        <input class="search-box" id="searchBox" placeholder="search ID, process, IP, user…" oninput="doFilter()">
+      </div>
+
+      <!-- Table -->
+      <div class="rounded-xl overflow-hidden" style="border:1px solid var(--border)">
+        <!-- Header -->
+        <div class="grid gap-2 px-5 py-2.5" style="background:var(--bg0);border-bottom:1px solid var(--border);grid-template-columns:2fr 2fr 3fr 1.2fr 1fr 1fr">
+          <div class="text-xs uppercase tracking-widest" style="color:var(--text3)">Group ID</div>
+          <div class="text-xs uppercase tracking-widest" style="color:var(--text3)">Type</div>
+          <div class="text-xs uppercase tracking-widest" style="color:var(--text3)">Processes</div>
+          <div class="text-xs uppercase tracking-widest" style="color:var(--text3)">Events (u/t)</div>
+          <div class="text-xs uppercase tracking-widest" style="color:var(--text3)">Duration</div>
+          <div class="text-xs uppercase tracking-widest" style="color:var(--text3)">Files</div>
+        </div>
+        <div id="tableBody" style="background:var(--bg1)"></div>
+        <div id="noRes" class="hidden text-center py-10 text-sm" style="color:var(--text3)">no groups match this filter</div>
+      </div>
+
+      <div id="tblFooter" class="mt-2 mono text-xs" style="color:var(--text3)"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let DATA = null, activeFilter = 'all', openId = null, chartInst = null;
+
+// ── Color / badge map ────────────────────────────────────────────────
+const TM = {
+  network_flow:         {label:'network flow',   cls:'b-net', dot:'#3b82f6'},
+  process_session:      {label:'process',        cls:'b-proc',dot:'#10b981'},
+  process_with_network: {label:'proc + net',     cls:'b-pn',  dot:'#8b5cf6'},
+  script_session:       {label:'script',         cls:'b-scr', dot:'#f97316'},
+  full_activity_session:{label:'full session',   cls:'b-full',dot:'#ef4444'},
+  network_with_script:  {label:'net + script',   cls:'b-net', dot:'#06b6d4'},
+  process_with_script:  {label:'proc + script',  cls:'b-pn',  dot:'#a78bfa'},
+};
+const tm = t => TM[t] || {label:t, cls:'b-mix', dot:'#94a3b8'};
+const badge = t => `<span class="badge ${tm(t).cls}">${tm(t).label}</span>`;
+const dot = t => tm(t).dot;
+
+// ── File drop / input ────────────────────────────────────────────────
+function onDragOver(e){
+  e.preventDefault();
+  document.getElementById('dropZone').style.background='rgba(0,200,232,.05)';
+}
+function onDragLeave(e){
+  document.getElementById('dropZone').style.background='';
+}
+function onDrop(e){
+  e.preventDefault();
+  document.getElementById('dropZone').style.background='';
+  const f = e.dataTransfer.files[0];
+  if(f) loadFile(f);
+}
+function onFileInput(e){
+  const f = e.target.files[0];
+  if(f) loadFile(f);
+}
+function loadFile(f){
+  const r = new FileReader();
+  r.onload = ev => {
+    try{
+      DATA = JSON.parse(ev.target.result);
+      boot(f.name);
+    }catch(err){ alert('Invalid JSON: ' + err.message); }
+  };
+  r.readAsText(f);
+}
+function resetAll(){
+  DATA = null; openId = null; activeFilter = 'all';
+  if(chartInst){ chartInst.destroy(); chartInst = null; }
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('landing').classList.remove('hidden');
+  document.getElementById('fi').value = '';
+}
+
+// ── Boot dashboard ───────────────────────────────────────────────────
+function boot(filename){
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+
+  const {meta, correlated_groups: G} = DATA;
+
+  // Header
+  document.getElementById('hdrFile').textContent = filename;
+  document.getElementById('hdrGenAt').textContent = meta.generated_at ? 'generated ' + meta.generated_at : '';
+
+  // Stats count-up
+  countUp('sTotal',  0, meta.total_events || 0,            900);
+  countUp('sGroups', 0, meta.total_groups  || G.length,    800);
+  const totalUniq = meta.unique_events_stored || G.reduce((s,g)=>s+(g.unique_events||0),0);
+  countUp('sUnique', 0, totalUniq, 700);
+
+  // Session span — largest single-day span (avoids multi-day gap from applog)
+  const tsByDay = {};
+  G.forEach(g=>[g.start_ts,g.end_ts].filter(Boolean).forEach(t=>{
+    const day = t.slice(0,10);
+    if(!tsByDay[day]) tsByDay[day]=[];
+    tsByDay[day].push(new Date(t).getTime());
+  }));
+  const spanMs = Math.max(...Object.values(tsByDay).map(a=>Math.max(...a)-Math.min(...a)));
+  const spanMin = Math.round(spanMs/60000);
+  const el = document.getElementById('sSpan');
+  if(spanMin>=60){el.textContent=(spanMin/60).toFixed(1)+'h';}
+  else{el.textContent=spanMin+' min';}
+
+  setTimeout(()=>buildChart(G), 250);
+  setTimeout(()=>buildTimeline(G), 350);
+  setTimeout(()=>doFilter(), 100);
+}
+
+// ── Count-up ────────────────────────────────────────────────────────
+function countUp(id, from, to, dur){
+  const el = document.getElementById(id);
+  const t0 = performance.now();
+  const step = now => {
+    const p = Math.min((now-t0)/dur, 1);
+    const e = 1-Math.pow(1-p, 3);
+    el.textContent = Math.round(from + (to-from)*e).toLocaleString();
+    if(p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+// ── Chart ────────────────────────────────────────────────────────────
+function buildChart(G){
+  const counts = {};
+  G.forEach(g => counts[g.corr_type] = (counts[g.corr_type]||0) + 1);
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+
+  if(chartInst) chartInst.destroy();
+  chartInst = new Chart(document.getElementById('typeChart').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels: sorted.map(([k]) => tm(k).label),
+      datasets:[{
+        data: sorted.map(([,v])=>v),
+        backgroundColor: sorted.map(([k])=>dot(k)+'44'),
+        borderColor:     sorted.map(([k])=>dot(k)),
+        borderWidth:1, borderRadius:4, borderSkipped:false,
+      }]
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      animation:{duration:900, easing:'easeOutQuart'},
+      plugins:{legend:{display:false}, tooltip:{
+        backgroundColor:'#0d1528',borderColor:'#1c2e4a',borderWidth:1,
+        titleColor:'#94a3b8',bodyColor:'#e2e8f0',
+        callbacks:{title: items => items[0].label, label: i => '  ' + i.raw + ' group' + (i.raw>1?'s':'')}
+      }},
+      scales:{
+        x:{ticks:{color:'#475569',font:{size:11,family:'JetBrains Mono'}},grid:{color:'#1c2e4a55'},border:{color:'#1c2e4a'}},
+        y:{ticks:{color:'#94a3b8',font:{size:11,family:'DM Sans'}},grid:{display:false},border:{display:false}}
+      }
+    }
+  });
+}
+
+// ── Timeline ─────────────────────────────────────────────────────────
+function buildTimeline(G){
+  const svg  = document.getElementById('tlSvg');
+  const tip  = document.getElementById('tlTip');
+  svg.innerHTML = '';
+
+  const valid = G.filter(g=>g.start_ts);
+  if(!valid.length) return;
+
+  const W    = svg.parentElement.clientWidth;
+  const H    = 90;
+  const PAD  = 28;
+  const AXIS = 60;
+
+  const times = valid.map(g=>new Date(g.start_ts).getTime());
+  const minT  = Math.min(...times);
+  const maxT  = Math.max(...times);
+  const span  = maxT - minT || 1;
+  const maxOc = Math.max(...valid.map(g=>g.total_occurrences||1));
+
+  const mkEl = (tag, attrs={}) => {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));
+    return el;
+  };
+
+  // Axis line
+  svg.appendChild(mkEl('line',{x1:PAD,x2:W-PAD,y1:AXIS,y2:AXIS,stroke:'#1c2e4a','stroke-width':'1'}));
+
+  // Tick marks + time labels
+  [0, 0.25, 0.5, 0.75, 1].forEach(p=>{
+    const x = PAD + p*(W-PAD*2);
+    const t = new Date(minT + p*span);
+    svg.appendChild(mkEl('line',{x1:x,x2:x,y1:AXIS-4,y2:AXIS+4,stroke:'#243a5e','stroke-width':'1'}));
+    const lbl = mkEl('text',{x,y:AXIS+18,'text-anchor':'middle',fill:'#475569','font-size':'10','font-family':'JetBrains Mono'});
+    lbl.textContent = t.toTimeString().slice(0,8);
+    svg.appendChild(lbl);
+  });
+
+  // Dots
+  valid.forEach((g, i) => {
+    const t = new Date(g.start_ts).getTime();
+    const x = PAD + ((t-minT)/span)*(W-PAD*2);
+    const r = 5 + Math.sqrt((g.total_occurrences||1)/maxOc)*14;
+    const color = dot(g.corr_type);
+
+    const c = mkEl('circle',{cx:x,cy:AXIS,r:0,fill:color+'44',stroke:color,'stroke-width':'1.5'});
+    c.style.cursor = 'pointer';
+    c.style.transition = 'r .2s ease';
+    svg.appendChild(c);
+
+    // Animate in staggered
+    setTimeout(()=>{
+      c.setAttribute('r', r);
+    }, 50 + i * 25);
+
+    c.addEventListener('mouseenter', ev=>{
+      c.setAttribute('r', r * 1.35);
+      const bb = svg.parentElement.getBoundingClientRect();
+      tip.style.display = 'block';
+      tip.style.left = Math.min(ev.clientX - bb.left + 14, bb.width - 200) + 'px';
+      tip.style.top  = (ev.clientY - bb.top - 56) + 'px';
+      tip.innerHTML  = `
+        <div style="color:#94a3b8;font-size:10px;margin-bottom:4px">${g.corr_id}</div>
+        <div style="color:#e2e8f0;margin-bottom:3px">${tm(g.corr_type).label}</div>
+        <div style="color:#60a5fa">${(g.total_occurrences||0).toLocaleString()} occurrences · ${(g.unique_events||0)} unique</div>
+        <div style="color:#475569;margin-top:3px">${(g.start_ts||'').slice(11,19)} → ${(g.end_ts||'').slice(11,19)}</div>
+      `;
+    });
+    c.addEventListener('mouseleave', ()=>{ c.setAttribute('r',r); tip.style.display='none'; });
+    c.addEventListener('click', ()=>{
+      const row = document.getElementById('row-'+g.corr_id);
+      if(row){ row.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(()=>openRow(g.corr_id), 350); }
+    });
+  });
+
+  // Legend
+  const seen = [...new Set(valid.map(g=>g.corr_type))];
+  document.getElementById('tlLegend').innerHTML = seen.map(t=>`
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="width:8px;height:8px;border-radius:50%;background:${dot(t)};flex-shrink:0"></div>
+      <span style="font-size:11px;color:#94a3b8">${tm(t).label}</span>
+    </div>`).join('');
+}
+
+// ── Filter + render ──────────────────────────────────────────────────
+function setFilter(f, btn){
+  activeFilter = f;
+  document.querySelectorAll('.f-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  doFilter();
+}
+
+function doFilter(){
+  if(!DATA) return;
+  const G      = DATA.correlated_groups;
+  const q      = document.getElementById('searchBox').value.toLowerCase();
+  openId       = null;
+
+  const filtered = G.filter(g=>{
+    if(activeFilter !== 'all' && g.corr_type !== activeFilter) return false;
+    if(q){
+      const hay = [g.corr_id, g.corr_type, ...(g.processes||[]), ...(g.dest_ips||[]), ...(g.users||[])].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const body   = document.getElementById('tableBody');
+  const noRes  = document.getElementById('noRes');
+  const footer = document.getElementById('tblFooter');
+
+  if(!filtered.length){
+    body.innerHTML = '';
+    noRes.classList.remove('hidden');
+  } else {
+    noRes.classList.add('hidden');
+    body.innerHTML = filtered.map((g,i) => buildRow(g, i)).join('');
+  }
+
+  footer.textContent = `showing ${filtered.length} of ${G.length} groups`;
+}
+
+// ── Row builder ──────────────────────────────────────────────────────
+function fmtDur(s){
+  if(!s) return '—';
+  if(s < 60)   return Math.round(s) + 's';
+  if(s < 3600) return Math.round(s/60) + 'm';
+  return (s/3600).toFixed(1) + 'h';
+}
+
+function buildRow(g, i){
+  const procs   = (g.processes||[]).slice(0,2).join(', ') || '—';
+  const excess  = (g.processes||[]).length > 2 ? ` <span style="color:var(--text3)">+${g.processes.length-2}</span>` : '';
+  const delay   = Math.min(i*30, 600);
+  const srcCount = (g.source_files||[]).length;
+  const rc      = g.repeat_count ? `<span style="color:var(--cyan);font-size:10px" class="mono"> ×${g.repeat_count}</span>` : '';
+
+  return `
+  <div class="g-row" id="row-${g.corr_id}">
+    <div class="row-inner row-anim" style="animation-delay:${delay}ms">
+      <div class="grid gap-2" style="grid-template-columns:2fr 2fr 3fr 1.2fr 1fr 1fr;align-items:center"
+           onclick="openRow('${g.corr_id}')">
+        <div class="mono text-xs truncate" style="color:#cbd5e1">${g.corr_id}${rc}</div>
+        <div>${badge(g.corr_type)}</div>
+        <div class="text-xs truncate" style="color:var(--text2)">${procs}${excess}</div>
+        <div class="mono text-xs" style="color:var(--text2)">${g.unique_events||0}<span style="color:var(--text3)">/${g.total_occurrences||0}</span></div>
+        <div class="mono text-xs" style="color:var(--text2)">${fmtDur(g.duration_seconds)}</div>
+        <div class="mono text-xs" style="color:var(--text3)">${srcCount}</div>
+      </div>
+    </div>
+    <div id="det-${g.corr_id}" class="detail-wrap">${buildDetail(g)}</div>
+  </div>`;
+}
+
+// ── Detail panel ─────────────────────────────────────────────────────
+function buildDetail(g){
+  const ips   = (g.dest_ips||[]).slice(0,6).join(', ') || '—';
+  const users = (g.users||[]).join(', ') || '—';
+  const prots = (g.protocols||[]).join(', ') || '—';
+  const start = (g.start_ts||'').slice(11,19);
+  const end   = (g.end_ts||'').slice(11,19);
+
+  const evRows = (g.events||[]).map(e=>{
+    const time   = (e.first_ts||'').slice(11,19);
+    const proc   = e.process_name || '';
+    const net    = e.dst_ip ? ` → ${e.dst_ip}:${e.dst_port||''}` : '';
+    const scr    = e.script_content ? ' ' + e.script_content.slice(0,55) + (e.script_content.length>55?'…':'') : '';
+    const desc   = (proc + net + scr) || e.record_type;
+    const cnt    = e.count && e.count > 1 ? `<span class="mono" style="color:var(--cyan);font-size:10px">×${e.count}</span>` : '';
+    const rtype  = e.record_type === 'network_connect' ? 'net' : e.record_type === 'process_start' ? 'proc' : e.record_type === 'script_execution' ? 'script' : e.record_type;
+    return `
+    <div class="ev-row">
+      <span class="mono flex-shrink-0" style="width:68px;font-size:10px;color:var(--text3)">${time}</span>
+      <span class="badge flex-shrink-0 b-mix" style="font-size:9px;padding:2px 7px">${rtype}</span>
+      <span class="text-xs truncate flex-1" style="color:var(--text2)">${desc}</span>
+      ${cnt}
+    </div>`;
+  }).join('');
+
+  return `
+  <div style="background:var(--bg0);border-top:1px solid var(--border);padding:18px 20px">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-5">
+      <div>
+        <div class="text-xs mb-1.5 uppercase tracking-wider" style="color:var(--text3)">Processes</div>
+        <div class="mono text-xs leading-relaxed" style="color:var(--text2)">${(g.processes||[]).join('<br>')||'—'}</div>
+      </div>
+      <div>
+        <div class="text-xs mb-1.5 uppercase tracking-wider" style="color:var(--text3)">User</div>
+        <div class="mono text-xs leading-relaxed" style="color:var(--text2)">${users}</div>
+      </div>
+      <div>
+        <div class="text-xs mb-1.5 uppercase tracking-wider" style="color:var(--text3)">Dest IPs</div>
+        <div class="mono text-xs leading-relaxed" style="color:var(--text2)">${ips}</div>
+      </div>
+      <div>
+        <div class="text-xs mb-1.5 uppercase tracking-wider" style="color:var(--text3)">Protocols</div>
+        <div class="mono text-xs mb-1" style="color:var(--text2)">${prots}</div>
+        <div class="text-xs mt-2 uppercase tracking-wider" style="color:var(--text3)">Time window</div>
+        <div class="mono text-xs" style="color:var(--cyan)">${start} → ${end} <span style="color:var(--text3)">(${fmtDur(g.duration_seconds)})</span></div>
+      </div>
+    </div>
+    <div class="text-xs uppercase tracking-widest mb-3" style="color:var(--text3)">
+      Unique events <span class="mono" style="color:var(--text3)">(${g.unique_events||0} unique · ${g.total_occurrences||0} total occurrences)</span>
+    </div>
+    <div style="max-height:220px;overflow-y:auto;border-top:1px solid var(--border);padding-top:4px">
+      ${evRows}
+    </div>
+  </div>`;
+}
+
+// ── Open / close row ─────────────────────────────────────────────────
+function openRow(id){
+  // Close previously open
+  if(openId && openId !== id){
+    const prev = document.getElementById('det-'+openId);
+    const prevRow = document.getElementById('row-'+openId);
+    if(prev) prev.classList.remove('open');
+    if(prevRow) prevRow.classList.remove('selected');
+  }
+
+  const det = document.getElementById('det-'+id);
+  const row = document.getElementById('row-'+id);
+  if(!det) return;
+
+  const isOpen = det.classList.contains('open');
+  det.classList.toggle('open', !isOpen);
+  row.classList.toggle('selected', !isOpen);
+  openId = isOpen ? null : id;
+}
+</script>
+</body>
+</html>
