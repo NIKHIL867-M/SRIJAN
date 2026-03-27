@@ -1,0 +1,14 @@
+{
+  "source": "PowerShell",
+  "event_id": "4104",
+  "timestamp": "2026-03-27 10:59:09",
+  "summary": "Script: . 'C:\\Users\\msant\\OneDrive\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1'",
+  "script_content": ". 'C:\\Users\\msant\\OneDrive\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1'",
+  "script_path": "",
+  "encoded_decoded": "",
+  "network_activity": "",
+  "pattern_hits": 0,
+  "credential_access": false,
+  "amsi_bypass": false,
+  "process_injection": false
+}
